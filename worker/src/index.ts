@@ -17,7 +17,6 @@ type ImportJob = {
   id: string;
   storage_path: string;
   file_name: string;
-  source_id: string | null;
 };
 
 type ExtractedQuestion = {
@@ -51,7 +50,7 @@ function splitQuestions(text: string): ExtractedQuestion[] {
 
   if (!matches.length) {
     return clean
-      ? [{ question_no: '1', raw_text: clean, command_word: detectCommandWord(clean), confidence: 0.35 }]
+      ? [{ question_no: '1', raw_text: clean, command_word: detectCommandWord(clean), confidence: 35 }]
       : [];
   }
 
@@ -63,7 +62,7 @@ function splitQuestions(text: string): ExtractedQuestion[] {
       question_no: match[1] ?? String(index + 1),
       raw_text: raw,
       command_word: detectCommandWord(raw),
-      confidence: raw.length > 40 ? 0.72 : 0.45,
+      confidence: raw.length > 40 ? 72 : 45,
     };
   });
 }
@@ -71,7 +70,7 @@ function splitQuestions(text: string): ExtractedQuestion[] {
 async function claimJob(): Promise<ImportJob | null> {
   const { data, error } = await supabase
     .from('import_jobs')
-    .select('id, storage_path, file_name, source_id')
+    .select('id, storage_path, file_name')
     .eq('status', 'queued')
     .order('created_at', { ascending: true })
     .limit(1)
@@ -82,10 +81,10 @@ async function claimJob(): Promise<ImportJob | null> {
 
   const { data: claimed, error: claimError } = await supabase
     .from('import_jobs')
-    .update({ status: 'processing', progress: 5, started_at: new Date().toISOString(), error_message: null })
+    .update({ status: 'processing', progress: 5, error_message: null, processor_version: 'worker-0.1.0' })
     .eq('id', data.id)
     .eq('status', 'queued')
-    .select('id, storage_path, file_name, source_id')
+    .select('id, storage_path, file_name')
     .maybeSingle();
 
   if (claimError) throw claimError;
@@ -95,7 +94,7 @@ async function claimJob(): Promise<ImportJob | null> {
 async function processJob(job: ImportJob) {
   try {
     const { data: file, error: downloadError } = await supabase.storage
-      .from('question-papers')
+      .from('question-pdfs')
       .download(job.storage_path);
     if (downloadError || !file) throw downloadError ?? new Error('PDF download failed');
 
@@ -109,18 +108,15 @@ async function processJob(job: ImportJob) {
     await supabase.from('question_staging').delete().eq('import_job_id', job.id);
 
     if (questions.length) {
-      const rows = questions.map((question, index) => ({
+      const rows = questions.map((question) => ({
         import_job_id: job.id,
-        source_id: job.source_id,
-        page_no: null,
-        sequence_no: index + 1,
-        question_no: question.question_no,
+        page_from: null,
+        page_to: null,
         raw_text: question.raw_text,
-        extracted_text: question.raw_text,
+        question_no: question.question_no,
         command_word: question.command_word,
-        extraction_confidence: question.confidence,
-        classification_status: 'pending',
-        review_status: 'pending',
+        classification_confidence: question.confidence,
+        status: 'extracted',
       }));
       const { error: insertError } = await supabase.from('question_staging').insert(rows);
       if (insertError) throw insertError;
@@ -129,10 +125,9 @@ async function processJob(job: ImportJob) {
     await supabase
       .from('import_jobs')
       .update({
-        status: 'extracted',
+        status: 'needs_review',
         progress: 100,
-        completed_at: new Date().toISOString(),
-        extracted_question_count: questions.length,
+        metadata: { extracted_question_count: questions.length, extraction_mode: 'embedded-text' },
       })
       .eq('id', job.id);
 
@@ -141,7 +136,7 @@ async function processJob(job: ImportJob) {
     const message = error instanceof Error ? error.message : String(error);
     await supabase
       .from('import_jobs')
-      .update({ status: 'failed', error_message: message, completed_at: new Date().toISOString() })
+      .update({ status: 'failed', error_message: message })
       .eq('id', job.id);
     console.error(`[worker] job ${job.id} failed:`, message);
   }
