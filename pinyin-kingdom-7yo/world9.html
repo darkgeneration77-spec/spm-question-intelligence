@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>拼音王国 World 9：儿化王国</title>
+  <style>
+    :root{--ink:#24324a;--blue:#4c6ef5;--purple:#845ef7;--green:#2f9e44;--red:#e03131;--gold:#f59f00;--pink:#e64980}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;font-family:"Arial Rounded MT Bold","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);background:linear-gradient(180deg,#ffe3ec,#fff4cc)}
+    button{font:inherit}.app{max-width:980px;margin:auto;padding:16px}.hero,.panel{background:rgba(255,255,255,.95);border-radius:28px;padding:18px;box-shadow:0 12px 30px rgba(36,50,74,.12)}
+    .hero{text-align:center}.hero h1{margin:0;font-size:clamp(30px,7vw,54px)}.hero p{margin:8px 0 0;font-size:18px}.panel{margin-top:14px}.hidden{display:none!important}
+    .lesson-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.lesson{background:#fff5f8;border:3px solid #fcc2d7;border-radius:22px;padding:16px}.lesson h3{margin:0 0 8px}.example{font-size:24px;color:var(--pink);margin:8px 0}.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.pill{background:#f3f0ff;color:#5f3dc4;padding:8px 12px;border-radius:999px}.progress{height:16px;background:#e9ecef;border-radius:999px;overflow:hidden;margin:14px 0}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--purple));width:0;transition:.3s}
+    .battle{display:grid;grid-template-columns:1fr 1.3fr;gap:14px}.fighter,.boss{border-radius:24px;padding:14px;text-align:center}.fighter{background:#f8f9fa}.boss{background:#fff0f6}.face{font-size:68px}.hp{height:14px;background:#dee2e6;border-radius:999px;overflow:hidden;margin-top:8px}.hp span{display:block;height:100%;transition:.3s}.fighter .hp span{background:var(--green)}.boss .hp span{background:var(--red)}
+    .question{text-align:center;font-size:clamp(26px,6vw,44px);padding:18px 8px}.hint{text-align:center;color:#667085;margin-bottom:12px}.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.answer{min-height:84px;border:3px solid #e9ecef;background:#fff;border-radius:22px;font-size:24px;cursor:pointer;transition:.15s}.answer:hover{transform:scale(1.02);border-color:var(--purple)}.answer.correct{background:#d3f9d8;border-color:var(--green)}.answer.wrong{background:#ffe3e3;border-color:var(--red)}
+    .combo{text-align:center;font-size:24px;color:var(--gold);min-height:34px}.message{text-align:center;min-height:44px;background:#f8f9fa;border-radius:18px;padding:12px;margin-top:12px}.skills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}.skill{border:2px solid #e9ecef;background:white;border-radius:16px;padding:9px 13px;cursor:pointer}.skill:disabled{opacity:.45;cursor:not-allowed}.primary{border:0;background:var(--purple);color:white;border-radius:18px;padding:14px 18px;cursor:pointer}.secondary{border:0;background:#f1f3f5;color:var(--ink);border-radius:18px;padding:14px 18px;cursor:pointer}.reward{text-align:center}.reward .big{font-size:86px}.stars{font-size:28px;letter-spacing:4px}.shake{animation:shake .35s}@keyframes shake{25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-5px)}}
+    @media(max-width:680px){.battle,.answers,.lesson-grid{grid-template-columns:1fr}.face{font-size:58px}}
+  </style>
+</head>
+<body>
+<main class="app">
+  <section class="hero">
+    <h1>👑 儿化王国</h1>
+    <p>听懂“儿”的秘密，打败儿化狐狸王！</p>
+  </section>
+
+  <section id="lessonPanel" class="panel">
+    <h2>先学会四个秘密</h2>
+    <div class="lesson-grid">
+      <div class="lesson"><h3>1. 区别词义</h3><div class="example">头 tóu → 头儿 tóur</div><p>“头”是脑袋，“头儿”可以表示领头的人。</p></div>
+      <div class="lesson"><h3>2. 区分词性</h3><div class="example">画 huà → 画儿 huàr</div><p>“画”可以是动作；“画儿”通常表示一幅画。</p></div>
+      <div class="lesson"><h3>3. 表示细小</h3><div class="example">盆 pén → 盆儿 pénr</div><p>加上“儿”，有时会有“小小的”感觉。</p></div>
+      <div class="lesson"><h3>4. 表示亲切喜爱</h3><div class="example">小孩 xiǎohái → 小孩儿 xiǎoháir</div><p>听起来更亲切、更可爱。</p></div>
+    </div>
+    <p style="text-align:center;margin-top:14px">口诀：<strong>区别意思、分清词性、小小可爱、亲切自然。</strong></p>
+    <button id="startBtn" class="primary" type="button" style="width:100%">开始挑战</button>
+  </section>
+
+  <section id="gamePanel" class="panel hidden">
+    <div class="top">
+      <button id="backBtn" class="secondary" type="button">← 返回拼音王国</button>
+      <span class="pill" id="round">第 1 / 30 题</span>
+      <span class="pill">⭐ <span id="score">0</span></span>
+    </div>
+    <div class="progress"><span id="progress"></span></div>
+    <div class="battle">
+      <div id="fighter" class="fighter"><div class="face">🐰</div><strong>小兔勇士</strong><div class="hp"><span id="playerHp" style="width:100%"></span></div><div id="playerHpText">100 HP</div></div>
+      <div id="boss" class="boss"><div class="face">🦊</div><strong>儿化狐狸王</strong><div class="hp"><span id="bossHp" style="width:100%"></span></div><div id="bossHpText">3000 HP</div></div>
+    </div>
+    <div id="combo" class="combo"></div>
+    <div id="question" class="question">准备开始</div>
+    <div id="hint" class="hint">选出正确答案。</div>
+    <div id="answers" class="answers"></div>
+    <div class="skills"><button id="hintSkill" class="skill" type="button">💡 提示 × 3</button><button id="shieldSkill" class="skill" type="button">🛡️ 护盾 × 1</button></div>
+    <div id="message" class="message">开始挑战吧！</div>
+  </section>
+
+  <section id="rewardPanel" class="panel reward hidden">
+    <div class="big">🏆</div>
+    <h2>儿化狐狸王被打败了！</h2>
+    <div id="stars" class="stars">⭐⭐⭐</div>
+    <p id="summary"></p>
+    <button id="againBtn" class="primary" type="button">再玩一次</button>
+    <button id="homeBtn" class="secondary" type="button">回到拼音王国</button>
+  </section>
+</main>
+<script>
+  const questions=[
+    {q:'“头”和“头儿”主要有什么不同？',a:'词义不同',c:['词义不同','声调相同','都是动词','没有不同'],tip:'“头”是脑袋，“头儿”可以表示领头的人。'},
+    {q:'“画儿”通常是什么词？',a:'名词',c:['名词','动词','量词','介词'],tip:'“画儿”通常表示一幅画，是名词。'},
+    {q:'“盆儿”常带有什么感觉？',a:'细小',c:['细小','愤怒','快速','正式'],tip:'儿化有时表示细小。'},
+    {q:'“小孩儿”常带有什么感情色彩？',a:'亲切喜爱',c:['亲切喜爱','害怕','生气','严肃'],tip:'儿化可以表示亲切或喜爱。'},
+    {q:'儿化韵最明显的发音特点是？',a:'卷舌',c:['卷舌','鼻音','轻声','去声'],tip:'儿化韵带有卷舌音。'},
+    {q:'哪一个词有儿化韵？',a:'花儿',c:['花儿','花园','开花','花朵'],tip:'“花儿”带儿化韵。'},
+    {q:'哪一个词表示亲切？',a:'小狗儿',c:['小狗儿','狗叫','大狗','狗粮'],tip:'“小狗儿”带亲切喜爱的感觉。'},
+    {q:'哪一个词更可能表示“小小的门”？',a:'门儿',c:['门儿','大门','校门','铁门'],tip:'儿化有时表示细小。'},
+    {q:'“玩儿”中的“儿”应该怎么读？',a:'和前一个音节合读',c:['和前一个音节合读','单独读 ér','不读','读成轻声'],tip:'儿化韵要和前一个音节合读。'},
+    {q:'“花儿”正确的拼音写法是？',a:'huār',c:['huā ér','huār','huáer','huǎr'],tip:'儿化拼音通常在原音节后加 r。'},
+    {q:'“头儿”正确的拼音写法是？',a:'tóur',c:['tóu ér','tóur','tǒur','tòur'],tip:'“头儿”写作 tóur。'},
+    {q:'“画儿”正确的拼音写法是？',a:'huàr',c:['huàr','huāer','huá r','huǎr'],tip:'“画儿”写作 huàr。'},
+    {q:'“小孩儿”正确的拼音写法是？',a:'xiǎoháir',c:['xiǎoháir','xiǎohái ér','xiǎohǎir','xiàoháir'],tip:'“小孩儿”写作 xiǎoháir。'},
+    {q:'哪一个不是儿化韵的作用？',a:'改变声母',c:['改变声母','区别词义','区分词性','表示亲切'],tip:'儿化不会把声母换掉。'},
+    {q:'“画”可以是动词，“画儿”通常是名词，这说明儿化可以？',a:'区分词性',c:['区分词性','改变声调','表示数量','表示时间'],tip:'儿化可以帮助区分词性。'},
+    {q:'“头”和“头儿”意思不同，这说明儿化可以？',a:'区别词义',c:['区别词义','表示时间','改变声母','表示否定'],tip:'儿化可以区别词义。'},
+    {q:'“小猫儿”表达什么感觉？',a:'亲切喜爱',c:['亲切喜爱','命令','责骂','危险'],tip:'儿化常带亲切喜爱的感觉。'},
+    {q:'“碗儿”更可能带有什么感觉？',a:'小巧',c:['小巧','很大','很远','很快'],tip:'儿化有时表示细小。'},
+    {q:'“门儿”中的 r 表示什么？',a:'卷舌儿化',c:['卷舌儿化','第二声','声母','轻声'],tip:'r 表示儿化卷舌。'},
+    {q:'哪一个读法最自然？',a:'花儿 huār',c:['花儿 huār','花儿 huā ér','花儿 huá','花儿 huǎ'],tip:'儿化要和前面的音节连在一起读。'},
+    {q:'“玩儿”比“玩”多了什么？',a:'儿化韵',c:['儿化韵','新声母','新声调','鼻韵母'],tip:'“玩儿”多了儿化韵。'},
+    {q:'“这儿”表示什么？',a:'这里',c:['这里','那里','谁','什么时候'],tip:'“这儿”就是“这里”。'},
+    {q:'“那儿”表示什么？',a:'那里',c:['那里','这里','哪里','今天'],tip:'“那儿”就是“那里”。'},
+    {q:'“哪儿”表示什么？',a:'哪里',c:['哪里','这里','那里','谁'],tip:'“哪儿”就是“哪里”。'},
+    {q:'哪一个是儿化词？',a:'这儿',c:['这儿','这里','这个','这些'],tip:'“这儿”是儿化词。'},
+    {q:'“花儿”中的“儿”要不要单独重读？',a:'不要',c:['不要','要','一定读第二声','一定读第四声'],tip:'儿化时，“儿”不单独重读。'},
+    {q:'儿化后，原来的词通常会？',a:'读得更连贯',c:['读得更连贯','分成两拍','变成鼻音','完全不发音'],tip:'儿化要把前后连起来读。'},
+    {q:'哪一个更有亲切感？',a:'孩子儿',c:['孩子儿','孩子','儿童','学生'],tip:'带儿化的说法往往更亲切。'},
+    {q:'“盆儿”中的“儿”最可能表示？',a:'细小',c:['细小','很多','很重','很旧'],tip:'儿化有时表示“小”。'},
+    {q:'儿化韵的核心记法是？',a:'前音节加 r 并卷舌',c:['前音节加 r 并卷舌','单独读 ér','去掉韵母','改成轻声'],tip:'记住：前音节加 r，连读并卷舌。'}
+  ];
+  const $=id=>document.getElementById(id);
+  let order=[],index=0,score=0,combo=0,player=100,boss=3000,locked=false,hints=3,shield=1,shieldOn=false,correct=0;
+  function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+  function start(){order=shuffle(questions);index=0;score=0;combo=0;player=100;boss=3000;locked=false;hints=3;shield=1;shieldOn=false;correct=0;$('lessonPanel').classList.add('hidden');$('rewardPanel').classList.add('hidden');$('gamePanel').classList.remove('hidden');update();render()}
+  function render(){locked=false;const item=order[index];$('round').textContent=`第 ${index+1} / ${order.length} 题`;$('progress').style.width=`${index/order.length*100}%`;$('question').textContent=item.q;$('hint').textContent='选出正确答案。';$('answers').innerHTML='';shuffle(item.c).forEach(choice=>{const b=document.createElement('button');b.type='button';b.className='answer';b.textContent=choice;b.addEventListener('click',()=>answer(b,choice,item));$('answers').appendChild(b)});$('message').textContent='看清楚，再点击。';updateSkills()}
+  function answer(btn,choice,item){if(locked)return;locked=true;const buttons=[...document.querySelectorAll('.answer')];if(choice===item.a){btn.classList.add('correct');combo++;correct++;let damage=100+Math.min(combo,5)*20;score+=damage;boss=Math.max(0,boss-damage);$('boss').classList.add('shake');setTimeout(()=>$('boss').classList.remove('shake'),350);$('message').textContent=`答对了！${item.tip}`;}else{btn.classList.add('wrong');combo=0;const right=buttons.find(x=>x.textContent===item.a);if(right)right.classList.add('correct');if(shieldOn){shieldOn=false;$('message').textContent=`护盾挡住攻击！正确答案是“${item.a}”。${item.tip}`;}else{player=Math.max(0,player-10);$('fighter').classList.add('shake');setTimeout(()=>$('fighter').classList.remove('shake'),350);$('message').textContent=`差一点。正确答案是“${item.a}”。${item.tip}`;}}buttons.forEach(x=>x.disabled=true);update();setTimeout(()=>{index++;if(index>=order.length||boss<=0)finish();else render()},1500)}
+  function update(){$('score').textContent=score;$('playerHp').style.width=player+'%';$('playerHpText').textContent=player+' HP';$('bossHp').style.width=(boss/3000*100)+'%';$('bossHpText').textContent=boss+' HP';$('combo').textContent=combo>=10?'🔥 LEGEND ×'+combo:combo>=5?'⚡ ULTRA ×'+combo:combo>=2?'🔥 COMBO ×'+combo:'';updateSkills()}
+  function updateSkills(){$('hintSkill').textContent='💡 提示 × '+hints;$('shieldSkill').textContent=shieldOn?'🛡️ 护盾已开启':'🛡️ 护盾 × '+shield;$('hintSkill').disabled=hints<=0||locked;$('shieldSkill').disabled=shield<=0||shieldOn||locked}
+  function finish(){$('gamePanel').classList.add('hidden');$('rewardPanel').classList.remove('hidden');const rate=Math.round(correct/order.length*100);$('stars').textContent=rate>=90?'⭐⭐⭐':rate>=70?'⭐⭐':'⭐';$('summary').textContent=`答对 ${correct} / ${order.length} 题，正确率 ${rate}%，获得 ${score} 分。`;localStorage.setItem('pinyinWorld9','completed')}
+  $('hintSkill').addEventListener('click',()=>{if(hints<=0||locked)return;hints--;const item=order[index];const wrong=[...document.querySelectorAll('.answer')].filter(b=>b.textContent!==item.a);shuffle(wrong).slice(0,2).forEach(b=>{b.disabled=true;b.style.opacity='.28'});$('hint').textContent='已经帮你排除两个错误答案。';updateSkills()});
+  $('shieldSkill').addEventListener('click',()=>{if(shield<=0||shieldOn||locked)return;shield--;shieldOn=true;$('message').textContent='护盾开启！下一次答错不会扣血。';updateSkills()});
+  $('startBtn').addEventListener('click',start);$('againBtn').addEventListener('click',start);$('backBtn').addEventListener('click',()=>location.href='./');$('homeBtn').addEventListener('click',()=>location.href='./');
+</script>
+</body>
+</html>
