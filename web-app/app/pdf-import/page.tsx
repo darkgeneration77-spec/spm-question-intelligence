@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '../../lib/supabase/server';
 import { PdfUploadForm } from './upload-form';
+import './pdf-import.css';
 
 export default async function PdfImportPage() {
   const supabase = await createClient();
