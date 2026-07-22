@@ -5,23 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>拼音王国 PK 大赛</title>
   <style>
-    :root{--ink:#273043;--blue:#5c7cfa;--orange:#ff922b;--green:#2f9e44;--red:#e03131;--card:#fff}
+    :root{--ink:#273043;--blue:#5c7cfa;--orange:#ff922b;--green:#2f9e44;--red:#e03131;--card:#fff;--purple:#845ef7;--gold:#f59f00}
     *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:"Arial Rounded MT Bold","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);background:linear-gradient(180deg,#dff7ff,#fff4cc)}
-    button,input{font:inherit}.app{max-width:900px;margin:auto;padding:16px}.hero,.panel{background:rgba(255,255,255,.94);border-radius:26px;padding:18px;box-shadow:0 12px 30px rgba(39,48,67,.12)}
+    button,input,select{font:inherit}.app{max-width:980px;margin:auto;padding:16px}.hero,.panel{background:rgba(255,255,255,.94);border-radius:26px;padding:18px;box-shadow:0 12px 30px rgba(39,48,67,.12)}
     .hero{text-align:center}.hero h1{margin:0;font-size:clamp(30px,8vw,56px)}.hero p{margin:8px 0 0;font-size:18px}.panel{margin-top:14px}.hidden{display:none!important}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:6px;margin-bottom:12px}.field input{width:100%;padding:14px;border:3px solid #e9ecef;border-radius:16px;font-size:20px}.btn{border:0;border-radius:18px;padding:14px 18px;cursor:pointer;font-weight:700}.primary{background:var(--blue);color:white}.secondary{background:#edf2ff;color:#364fc7}.orange{background:var(--orange);color:white}.back{background:#f1f3f5;color:var(--ink)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:6px;margin-bottom:12px}.field input,.field select{width:100%;padding:14px;border:3px solid #e9ecef;border-radius:16px;font-size:20px;background:white}.btn{border:0;border-radius:18px;padding:14px 18px;cursor:pointer;font-weight:700}.primary{background:var(--blue);color:white}.secondary{background:#edf2ff;color:#364fc7}.orange{background:var(--orange);color:white}.purple{background:var(--purple);color:white}.back{background:#f1f3f5;color:var(--ink)}
     .room-code{font-size:42px;letter-spacing:8px;text-align:center;margin:12px 0}.players{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.player{background:#f8f9fa;border-radius:18px;padding:12px;display:flex;justify-content:space-between;align-items:center}.ready{color:var(--green)}
-    .top{display:flex;justify-content:space-between;gap:8px;align-items:center}.timer{font-size:34px}.question{font-size:clamp(28px,7vw,48px);text-align:center;padding:24px 8px}.answers{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.answer{min-height:76px;border:3px solid #e9ecef;background:white;border-radius:20px;font-size:26px;cursor:pointer}.answer:disabled{cursor:not-allowed;opacity:.75}.answer.correct{background:#d3f9d8;border-color:var(--green)}.answer.wrong{background:#ffe3e3;border-color:var(--red)}
+    .top{display:flex;justify-content:space-between;gap:8px;align-items:center}.timer{font-size:34px}.question{font-size:clamp(28px,7vw,48px);text-align:center;padding:18px 8px}.answers{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.answer{min-height:76px;border:3px solid #e9ecef;background:white;border-radius:20px;font-size:26px;cursor:pointer}.answer:disabled{cursor:not-allowed;opacity:.75}.answer.correct{background:#d3f9d8;border-color:var(--green)}.answer.wrong{background:#ffe3e3;border-color:var(--red)}
     .scoreboard{display:grid;gap:8px}.rank{display:grid;grid-template-columns:46px 1fr 70px;align-items:center;background:#f8f9fa;border-radius:16px;padding:10px}.rank strong:last-child{text-align:right}.message{text-align:center;min-height:30px;margin:12px 0}.note{font-size:14px;color:#667085;text-align:center;margin-top:12px}
-    @media(max-width:620px){.grid,.players,.answers{grid-template-columns:1fr}.room-code{font-size:34px}.top{align-items:flex-start;flex-direction:column}}
+    .character-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.character{border:3px solid #edf2f7;border-radius:18px;background:white;padding:10px;cursor:pointer;text-align:center}.character.selected{border-color:var(--purple);background:#f3f0ff}.character .face{font-size:42px;display:block}.battle{display:grid;grid-template-columns:1fr 1.4fr;gap:14px;align-items:stretch;margin:12px 0}.fighter,.boss{border-radius:22px;padding:14px;text-align:center}.fighter{background:#f8f9fa}.boss{background:#fff0f6}.face-big{font-size:64px}.hp{height:14px;background:#dee2e6;border-radius:999px;overflow:hidden;margin-top:8px}.hp span{display:block;height:100%;transition:.3s}.fighter .hp span{background:var(--green)}.boss .hp span{background:var(--red)}.powerups{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}.power{border:2px solid #e9ecef;background:white;border-radius:14px;padding:8px 12px;cursor:pointer}.power.active{border-color:var(--gold);background:#fff9db}.combo{font-size:24px;text-align:center;color:var(--orange);min-height:34px}.shake{animation:shake .35s}.hit{animation:hit .35s}.flash{animation:flash .45s}@keyframes shake{25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-5px)}}@keyframes hit{50%{transform:scale(1.12)}}@keyframes flash{50%{filter:brightness(1.8)}}
+    .podium{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:end;margin:18px 0}.podium>div{background:#f8f9fa;border-radius:18px;padding:14px;text-align:center}.podium .first{min-height:180px;background:#fff9db}.podium .second{min-height:150px}.podium .third{min-height:130px}.podium .medal{font-size:44px}.teacher-tools{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
+    @media(max-width:680px){.grid,.players,.answers,.battle,.character-grid,.podium{grid-template-columns:1fr}.room-code{font-size:34px}.top{align-items:flex-start;flex-direction:column}}
   </style>
 </head>
 <body>
 <main class="app">
-  <section class="hero"><h1>⚔️ 拼音王国 PK</h1><p>同一间课室，多位学生同时抢答！</p></section>
+  <section class="hero"><h1>⚔️ 拼音王国 PK</h1><p>选角色、打 Boss、抢第一！</p></section>
 
   <section id="connectPanel" class="panel">
     <div class="field"><label for="name">勇士名字</label><input id="name" maxlength="12" placeholder="例如：小美"></div>
+    <div class="field"><label>选择角色</label><div id="characterGrid" class="character-grid"></div></div>
     <div class="grid">
       <button id="createBtn" class="btn orange" type="button">创建比赛房间</button>
       <div>
@@ -35,7 +38,7 @@
   <section id="lobbyPanel" class="panel hidden">
     <div class="top"><button id="leaveBtn" class="btn back" type="button">← 离开</button><strong>等待勇士加入</strong><span id="count">0 人</span></div>
     <div class="room-code" id="roomCode">------</div>
-    <p class="note">老师把这个号码告诉学生。所有人输入同一个号码即可进入。</p>
+    <p class="note">老师把号码告诉学生。所有人输入同一个号码即可进入。</p>
     <div id="players" class="players"></div>
     <div class="grid" style="margin-top:14px">
       <button id="readyBtn" class="btn secondary" type="button">我准备好了</button>
@@ -45,62 +48,99 @@
   </section>
 
   <section id="gamePanel" class="panel hidden">
-    <div class="top"><strong id="round">第 1 / 10 题</strong><strong class="timer" id="timer">10</strong><strong id="myScore">⭐ 0</strong></div>
+    <div class="top"><strong id="round">第 1 / 20 题</strong><strong class="timer" id="timer">10</strong><strong id="myScore">⭐ 0</strong></div>
+    <div class="battle">
+      <div id="fighterCard" class="fighter"><div id="myAvatar" class="face-big">🐰</div><strong id="myName">勇士</strong><div class="hp"><span id="myHp" style="width:100%"></span></div><div id="myHpText">100 HP</div></div>
+      <div id="bossCard" class="boss"><div class="face-big">🐲</div><strong>声调龙</strong><div class="hp"><span id="bossHp" style="width:100%"></span></div><div id="bossHpText">5000 HP</div></div>
+    </div>
+    <div id="combo" class="combo"></div>
     <div id="question" class="question">准备出题</div>
     <div id="answers" class="answers"></div>
+    <div class="powerups" id="powerups"></div>
     <p id="gameMessage" class="message">看准再抢答！</p>
+    <div id="teacherTools" class="teacher-tools hidden"><button id="rageBtn" class="btn orange" type="button">🔥 Boss狂暴</button><button id="bonusBtn" class="btn purple" type="button">⭐ 双倍回合</button></div>
     <div id="liveRanks" class="scoreboard"></div>
   </section>
 
   <section id="resultPanel" class="panel hidden">
-    <h2 style="text-align:center">🏆 比赛成绩</h2><div id="finalRanks" class="scoreboard"></div>
+    <h2 style="text-align:center">🏆 比赛成绩</h2><div id="podium" class="podium"></div><div id="finalRanks" class="scoreboard"></div>
     <button id="againBtn" class="btn primary" type="button" style="width:100%;margin-top:14px">回到房间再来一局</button>
   </section>
 </main>
 <script>
-  // 部署 Cloudflare Worker 后，把下面网址改成你的 workers.dev 网址。
   const PK_SERVER = 'https://REPLACE-WITH-YOUR-WORKER.workers.dev';
-  const questions = [
-    {q:'“妈 mā” 是第几声？',a:'第一声',c:['第一声','第二声','第三声','第四声']},
-    {q:'“马 mǎ” 是第几声？',a:'第三声',c:['第一声','第二声','第三声','第四声']},
-    {q:'“骂 mà” 是第几声？',a:'第四声',c:['第一声','第二声','第三声','第四声']},
-    {q:'“跑” 的正确拼音是？',a:'pǎo',c:['pāo','páo','pǎo','pào']},
-    {q:'“多” 的正确拼音是？',a:'duō',c:['dūo','duō','duó','duǒ']},
-    {q:'“灰” 的正确拼音是？',a:'huī',c:['hūi','huí','huī','huǐ']},
-    {q:'“秀” 的正确拼音是？',a:'xiù',c:['xìu','xiú','xiù','xǐu']},
-    {q:'“女” 的正确拼音是？',a:'nǚ',c:['nǔ','nǚ','nù','nū']},
-    {q:'“雨” 的正确拼音是？',a:'yǔ',c:['yǚ','yǔ','yù','yú']},
-    {q:'i 和 u 一起时，声调标在哪里？',a:'标在后面的韵母',c:['标在前面','标在后面的韵母','两个都标','不用标']}
+  const characters=[['🐰','小兔骑士'],['🦊','狐狸忍者'],['🐼','熊猫法师'],['🐸','青蛙战士'],['🐱','猫咪剑客'],['🐵','猴王'],['🦄','独角兽'],['🐲','小龙勇士']];
+  const questions=[
+    {q:'“妈 mā” 是第几声？',a:'第一声',c:['第一声','第二声','第三声','第四声'],tip:'ā 平平的，是第一声。'},
+    {q:'“麻 má” 是第几声？',a:'第二声',c:['第一声','第二声','第三声','第四声'],tip:'á 向上扬，是第二声。'},
+    {q:'“马 mǎ” 是第几声？',a:'第三声',c:['第一声','第二声','第三声','第四声'],tip:'ǎ 先下后上，是第三声。'},
+    {q:'“骂 mà” 是第几声？',a:'第四声',c:['第一声','第二声','第三声','第四声'],tip:'à 往下落，是第四声。'},
+    {q:'“跑” 的正确拼音是？',a:'pǎo',c:['pāo','páo','pǎo','pào'],tip:'“跑”读第三声：pǎo。'},
+    {q:'“多” 的正确拼音是？',a:'duō',c:['dūo','duō','duó','duǒ'],tip:'有 a 找 a，没有 a 找 o、e。'},
+    {q:'“灰” 的正确拼音是？',a:'huī',c:['hūi','huí','huī','huǐ'],tip:'i、u 并列，声调标后面。'},
+    {q:'“秀” 的正确拼音是？',a:'xiù',c:['xìu','xiú','xiù','xǐu'],tip:'i、u 并列，声调标后面。'},
+    {q:'“女” 的正确拼音是？',a:'nǚ',c:['nǔ','nǚ','nù','nū'],tip:'n、l 遇 ü，要保留两点。'},
+    {q:'“雨” 的正确拼音是？',a:'yǔ',c:['yǚ','yǔ','yù','yú'],tip:'y 遇 ü，去掉两点。'},
+    {q:'i 和 u 一起时，声调标在哪里？',a:'后面的韵母',c:['前面的韵母','后面的韵母','两个都标','不用标'],tip:'口诀：i、u 并列标在后。'},
+    {q:'哪一个是声母？',a:'b',c:['b','ai','ang','ü'],tip:'声母在音节最前面。'},
+    {q:'哪一个是单韵母？',a:'a',c:['a','ai','ang','er'],tip:'单韵母有 a、o、e、i、u、ü。'},
+    {q:'哪一个是复韵母？',a:'ai',c:['b','ai','an','ang'],tip:'ai 由两个韵母组成。'},
+    {q:'哪一个是前鼻音？',a:'an',c:['an','ang','ao','ai'],tip:'前鼻音以 n 收尾。'},
+    {q:'哪一个是后鼻音？',a:'ang',c:['an','ang','ai','ao'],tip:'后鼻音以 ng 收尾。'},
+    {q:'“不是”里的“不”应该怎么读？',a:'bú',c:['bū','bú','bǔ','bù'],tip:'“不”遇第四声，读 bú。'},
+    {q:'“很好”两个第三声连在一起，前面怎么读？',a:'第二声',c:['第一声','第二声','第三声','第四声'],tip:'两个第三声连用，前一个变第二声。'},
+    {q:'“妈妈”第二个“妈”通常读什么？',a:'轻声',c:['第一声','第二声','第三声','轻声'],tip:'名词重叠，第二个常读轻声。'},
+    {q:'“小孩儿”里的“儿”有什么作用？',a:'表示亲切喜爱',c:['表示数量','表示亲切喜爱','表示时间','表示颜色'],tip:'儿化可以表示亲切或喜爱。'}
   ];
-  const $=id=>document.getElementById(id);let ws=null,me='',room='',host=false,myId='',answered=false;
+  const $=id=>document.getElementById(id);let ws=null,me='',room='',host=false,myId='',answered=false,selectedCharacter=0,localCombo=0,localHp=100,bossMax=5000,bossNow=5000,doubleRound=false,powers=[];
   function show(id){['connectPanel','lobbyPanel','gamePanel','resultPanel'].forEach(x=>$(x).classList.toggle('hidden',x!==id))}
   function send(type,data={}){if(ws&&ws.readyState===1)ws.send(JSON.stringify({type,...data}))}
+  function renderCharacters(){$('characterGrid').innerHTML=characters.map((c,i)=>`<button type="button" class="character ${i===selectedCharacter?'selected':''}" data-i="${i}"><span class="face">${c[0]}</span>${c[1]}</button>`).join('');document.querySelectorAll('.character').forEach(b=>b.addEventListener('click',()=>{selectedCharacter=Number(b.dataset.i);renderCharacters()}))}
   function connect(code,isHost){
     me=$('name').value.trim();if(!me){$('connectMessage').textContent='先写上勇士名字。';return}
     if(PK_SERVER.includes('REPLACE-')){$('connectMessage').textContent='线上PK后台还未部署。请先完成 Cloudflare Worker 部署。';return}
-    room=code;host=isHost;const u=new URL(PK_SERVER.replace(/^http/,'ws')+'/room/'+room);u.searchParams.set('name',me);u.searchParams.set('host',host?'1':'0');ws=new WebSocket(u);
+    room=code;host=isHost;const u=new URL(PK_SERVER.replace(/^http/,'ws')+'/room/'+room);u.searchParams.set('name',me);u.searchParams.set('host',host?'1':'0');u.searchParams.set('avatar',characters[selectedCharacter][0]);ws=new WebSocket(u);
     ws.onopen=()=>show('lobbyPanel');ws.onmessage=e=>handle(JSON.parse(e.data));ws.onerror=()=>{$('connectMessage').textContent='连接失败，请检查网络或后台网址。'};ws.onclose=()=>{if(!$('resultPanel').classList.contains('hidden'))return;$('lobbyMessage').textContent='连接已断开。'};
   }
   function handle(m){
-    if(m.type==='welcome'){myId=m.id;room=m.room;$('roomCode').textContent=room;$('startBtn').classList.toggle('hidden',!m.isHost)}
-    if(m.type==='state'){renderPlayers(m.players);renderRanks(m.players,'liveRanks');$('count').textContent=m.players.length+' 人'}
-    if(m.type==='question'){show('gamePanel');answered=false;renderQuestion(m.index,m.question,m.endsAt)}
-    if(m.type==='answerResult'){$('gameMessage').textContent=m.correct?'答对了！速度加分！':'差一点，正确答案是：'+m.answer;markAnswer(m.choice,m.answer)}
-    if(m.type==='finished'){renderRanks(m.players,'finalRanks');show('resultPanel')}
+    if(m.type==='welcome'){myId=m.id;room=m.room;$('roomCode').textContent=room;$('startBtn').classList.toggle('hidden',!m.isHost);$('teacherTools').classList.toggle('hidden',!m.isHost)}
+    if(m.type==='state'){renderPlayers(m.players);renderRanks(m.players,'liveRanks');$('count').textContent=m.players.length+' 人';const mine=m.players.find(p=>p.id===myId);if(mine){$('myScore').textContent='⭐ '+mine.score;$('myAvatar').textContent=mine.avatar||characters[selectedCharacter][0];$('myName').textContent=mine.name}}
+    if(m.type==='question'){show('gamePanel');answered=false;doubleRound=!!m.doubleRound;renderQuestion(m.index,m.question,m.endsAt)}
+    if(m.type==='answerResult'){applyAnswerResult(m)}
+    if(m.type==='boss'){bossNow=Math.max(0,m.hp);updateBoss();$('bossCard').classList.add('shake');setTimeout(()=>$('bossCard').classList.remove('shake'),350)}
+    if(m.type==='power'){powers.push(m.power);renderPowerups();$('gameMessage').textContent='获得技能：'+m.power}
+    if(m.type==='teacherEffect'){$('gameMessage').textContent=m.message}
+    if(m.type==='finished'){renderRanks(m.players,'finalRanks');renderPodium(m.players);show('resultPanel')}
     if(m.type==='error'){$('connectMessage').textContent=m.message;$('lobbyMessage').textContent=m.message}
   }
-  function renderPlayers(list){$('players').innerHTML=list.map(p=>`<div class="player"><span>${p.host?'👑 ':''}${esc(p.name)}</span><strong class="${p.ready?'ready':''}">${p.ready?'已准备':'等待中'}</strong></div>`).join('')}
-  function renderRanks(list,target){const sorted=[...list].sort((a,b)=>b.score-a.score||a.name.localeCompare(b.name));$(target).innerHTML=sorted.map((p,i)=>`<div class="rank"><strong>${['🥇','🥈','🥉'][i]||i+1}</strong><span>${esc(p.name)}</span><strong>${p.score}</strong></div>`).join('')}
+  function applyAnswerResult(m){
+    $('gameMessage').textContent=m.correct?'答对了！'+(m.tip||''):'差一点，正确答案是：'+m.answer+'。'+(m.tip||'');markAnswer(m.choice,m.answer);
+    if(m.correct){localCombo++;const damage=usePower('💣 炸弹')?350:100+Math.min(localCombo,10)*20+(doubleRound?100:0);bossNow=Math.max(0,bossNow-damage);updateBoss();$('bossCard').classList.add('hit');setTimeout(()=>$('bossCard').classList.remove('hit'),350);if(Math.random()<.28){powers.push(['🛡️ 护盾','💣 炸弹','❤️ 回血','⭐ 双倍'][Math.floor(Math.random()*4)]);renderPowerups()}}
+    else{localCombo=0;if(!usePower('🛡️ 护盾')){localHp=Math.max(0,localHp-20);updateHp();$('fighterCard').classList.add('shake');setTimeout(()=>$('fighterCard').classList.remove('shake'),350)}}
+    updateCombo();
+  }
+  function renderPlayers(list){$('players').innerHTML=list.map(p=>`<div class="player"><span>${p.host?'👑 ':''}${p.avatar||'🐰'} ${esc(p.name)}</span><strong class="${p.ready?'ready':''}">${p.ready?'已准备':'等待中'}</strong></div>`).join('')}
+  function renderRanks(list,target){const sorted=[...list].sort((a,b)=>b.score-a.score||a.name.localeCompare(b.name));$(target).innerHTML=sorted.map((p,i)=>`<div class="rank"><strong>${['🥇','🥈','🥉'][i]||i+1}</strong><span>${p.avatar||'🐰'} ${esc(p.name)}</span><strong>${p.score}</strong></div>`).join('')}
+  function renderPodium(list){const s=[...list].sort((a,b)=>b.score-a.score);const order=[s[1],s[0],s[2]];$('podium').innerHTML=order.map((p,i)=>p?`<div class="${['second','first','third'][i]}"><div class="medal">${['🥈','🥇','🥉'][i]}</div><div style="font-size:46px">${p.avatar||'🐰'}</div><strong>${esc(p.name)}</strong><div>${p.score}分</div></div>`:'').join('')}
   function renderQuestion(i,q,endsAt){$('round').textContent=`第 ${i+1} / ${questions.length} 题`;$('question').textContent=q.q;$('answers').innerHTML='';q.c.forEach(choice=>{const b=document.createElement('button');b.type='button';b.className='answer';b.textContent=choice;b.addEventListener('click',()=>{if(answered)return;answered=true;document.querySelectorAll('.answer').forEach(x=>x.disabled=true);send('answer',{choice});$('gameMessage').textContent='答案已送出！'});$('answers').appendChild(b)});tick(endsAt)}
   function tick(endsAt){const f=()=>{const n=Math.max(0,Math.ceil((endsAt-Date.now())/1000));$('timer').textContent=n;if(n>0&&!$('gamePanel').classList.contains('hidden'))requestAnimationFrame(f)};f()}
   function markAnswer(choice,answer){document.querySelectorAll('.answer').forEach(b=>{if(b.textContent===answer)b.classList.add('correct');else if(b.textContent===choice)b.classList.add('wrong')})}
+  function renderPowerups(){$('powerups').innerHTML=powers.map((p,i)=>`<button type="button" class="power" data-i="${i}">${p}</button>`).join('');document.querySelectorAll('.power').forEach(b=>b.addEventListener('click',()=>activatePower(Number(b.dataset.i))))}
+  function activatePower(i){const p=powers.splice(i,1)[0];if(p==='❤️ 回血'){localHp=Math.min(100,localHp+30);updateHp();$('gameMessage').textContent='恢复30点生命！'}else if(p==='⭐ 双倍'){doubleRound=true;$('gameMessage').textContent='本题双倍攻击！'}else{powers.unshift(p);$('gameMessage').textContent=p+' 会在需要时自动使用。'}renderPowerups()}
+  function usePower(name){const i=powers.indexOf(name);if(i<0)return false;powers.splice(i,1);renderPowerups();return true}
+  function updateCombo(){$('combo').textContent=localCombo>=10?'🔥 LEGEND COMBO ×'+localCombo:localCombo>=5?'🔥 ULTRA COMBO ×'+localCombo:localCombo>=2?'🔥 COMBO ×'+localCombo:''}
+  function updateHp(){$('myHp').style.width=localHp+'%';$('myHpText').textContent=localHp+' HP'}
+  function updateBoss(){const pct=Math.max(0,bossNow/bossMax*100);$('bossHp').style.width=pct+'%';$('bossHpText').textContent=bossNow+' HP'}
   function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+  renderCharacters();updateHp();updateBoss();
   $('createBtn').addEventListener('click',()=>connect(String(Math.floor(100000+Math.random()*900000)),true));
   $('joinBtn').addEventListener('click',()=>{const c=$('roomInput').value.trim();if(!/^\d{6}$/.test(c)){$('connectMessage').textContent='请输入6位房间号码。';return}connect(c,false)});
   $('readyBtn').addEventListener('click',()=>send('ready'));
   $('startBtn').addEventListener('click',()=>send('start',{questions}));
   $('leaveBtn').addEventListener('click',()=>{if(ws)ws.close();show('connectPanel')});
-  $('againBtn').addEventListener('click',()=>{show('lobbyPanel');send('reset')});
+  $('againBtn').addEventListener('click',()=>{show('lobbyPanel');localCombo=0;localHp=100;bossNow=bossMax;powers=[];updateCombo();updateHp();updateBoss();renderPowerups();send('reset')});
+  $('rageBtn').addEventListener('click',()=>send('teacherEffect',{effect:'rage'}));
+  $('bonusBtn').addEventListener('click',()=>send('teacherEffect',{effect:'double'}));
 </script>
 </body>
 </html>
