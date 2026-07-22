@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '../../lib/supabase/server';
 import { approveStaging, rejectStaging, updateStaging } from './actions';
+import './staging.css';
 
 export default async function StagingPage(){
   const supabase=await createClient();
