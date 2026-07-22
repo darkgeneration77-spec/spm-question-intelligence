@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="SPM 历年题目趋势、题库导入、资料质量与复习优先级分析系统" />
+  <meta name="description" content="SPM 历年题目趋势、教师审核、资料质量与复习优先级分析系统" />
   <title>SPM Question Intelligence</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="phase2.css" />
@@ -15,6 +15,7 @@
       <nav>
         <button class="nav-item active" data-view="dashboard">总览 Dashboard</button>
         <button class="nav-item" data-view="questions">历年题库 Questions</button>
+        <button class="nav-item" data-view="teacher">教师工作台 Workspace</button>
         <button class="nav-item" data-view="catalog">章节目录 Catalog</button>
         <button class="nav-item" data-view="quality">资料质量 Data Quality</button>
         <button class="nav-item" data-view="import">导入资料 Import</button>
@@ -26,8 +27,8 @@
 
     <main>
       <header class="topbar">
-        <div><p class="eyebrow">KSSM · QUESTION INTELLIGENCE</p><h1>SPM 历年题目智能分析</h1><p class="subtitle">以独立题目记录、来源验证、章节覆盖、重复题群组和透明评分，建立可审核的十年趋势分析。</p></div>
-        <div class="status"><span></span>Phase 4 · Data Engine</div>
+        <div><p class="eyebrow">KSSM · QUESTION INTELLIGENCE</p><h1>SPM 历年题目智能分析</h1><p class="subtitle">以独立题目记录、教师审核、章节覆盖、重复题群组和透明评分，建立可维护的十年趋势分析。</p></div>
+        <div class="status"><span></span>Phase 5 · Teacher Workspace</div>
       </header>
 
       <section class="filters card">
@@ -56,9 +57,16 @@
         <article class="card"><div class="card-head"><div><p class="eyebrow">QUESTION BANK</p><h2>标准化题目记录</h2></div><div class="head-actions"><button id="exportBtn" class="secondary small">导出 CSV</button><span id="resultCount" class="chip"></span></div></div><div class="table-wrap"><table><thead><tr><th>ID / 年份</th><th>科目 / Form</th><th>来源 / 州属</th><th>试卷位置</th><th>章节 / 考点</th><th>命令词 / 技能</th><th>题型</th><th>分数</th><th>质量</th></tr></thead><tbody id="questionTable"></tbody></table></div></article>
       </section>
 
-      <section id="catalogView" class="view">
-        <article class="card"><div class="card-head"><div><p class="eyebrow">SEJARAH KSSM TAXONOMY</p><h2>Form 4 + Form 5 完整章节目录</h2></div><span class="chip">20 Chapters</span></div><div id="chapterCatalog" class="catalog-grid"></div></article>
+      <section id="teacherView" class="view">
+        <div class="teacher-toolbar card">
+          <div><p class="eyebrow">TEACHER WORKSPACE</p><h2>新增、审核与维护题目</h2><p class="muted">所有修改先储存在当前浏览器；导出 CSV 后可作为正式备份或交给团队复核。</p></div>
+          <div class="head-actions"><button id="addQuestionBtn" class="primary-btn">新增题目</button><button id="verifyVisibleBtn" class="secondary">审核当前待办</button></div>
+        </div>
+        <div class="stats" id="teacherStats"></div>
+        <article class="card"><div class="card-head"><div><p class="eyebrow">REVIEW & EDIT</p><h2>教师审核队列</h2></div><span class="chip">本机资料可编辑</span></div><div id="teacherQueue"></div></article>
       </section>
+
+      <section id="catalogView" class="view"><article class="card"><div class="card-head"><div><p class="eyebrow">SEJARAH KSSM TAXONOMY</p><h2>Form 4 + Form 5 完整章节目录</h2></div><span class="chip">20 Chapters</span></div><div id="chapterCatalog" class="catalog-grid"></div></article></section>
 
       <section id="qualityView" class="view">
         <div class="stats" id="qualityStats"></div>
@@ -69,22 +77,38 @@
         <article class="card"><div class="card-head"><div><p class="eyebrow">REVIEW QUEUE</p><h2>优先人工审核清单</h2></div></div><div id="reviewQueue"></div></article>
       </section>
 
-      <section id="importView" class="view">
-        <div class="import-grid">
-          <article class="card"><p class="eyebrow">CSV IMPORT</p><h2>批量导入题库</h2><p class="muted">每一道题填写一行。系统会生成 Question ID、检查必填栏、检测完全重复，并根据资料完整度计算质量分。</p><div class="dropzone"><input id="csvFile" type="file" accept=".csv,text/csv" /><strong>选择 CSV 文件</strong><span>UTF-8 编码，第一行必须是字段名称</span></div><div class="import-actions"><a class="button-link" href="question-template.csv" download>下载新版 CSV 模板</a><button id="clearImportedBtn" class="secondary">清除本机导入资料</button></div><div id="importResult" class="import-result muted">尚未导入文件。</div></article>
-          <article class="card"><p class="eyebrow">DATA STANDARD V4</p><h2>新增核心字段</h2><div class="field-list"><code>question_id</code><code>state</code><code>section</code><code>question_no</code><code>command_word</code><code>cognitive</code><code>skills</code><code>duplicate_group</code><code>source_url</code></div><p class="muted">Question ID 可以留空，系统会自动产生。skills 使用竖线分隔，例如 <code>fakta|sebab|KBAT</code>。</p><div class="warning-box"><strong>资料纪律</strong><p>同一原题被多个网站转载时，应使用相同 duplicate_group。系统只让每个重复群组中的最高质量记录获得完整权重。</p></div></article>
-        </div>
-      </section>
+      <section id="importView" class="view"><div class="import-grid">
+        <article class="card"><p class="eyebrow">CSV IMPORT</p><h2>批量导入题库</h2><p class="muted">每一道题填写一行。系统会生成 Question ID、检查必填栏、检测完全重复，并根据资料完整度计算质量分。</p><div class="dropzone"><input id="csvFile" type="file" accept=".csv,text/csv" /><strong>选择 CSV 文件</strong><span>UTF-8 编码，第一行必须是字段名称</span></div><div class="import-actions"><a class="button-link" href="question-template.csv" download>下载新版 CSV 模板</a><button id="clearImportedBtn" class="secondary">清除本机导入资料</button></div><div id="importResult" class="import-result muted">尚未导入文件。</div></article>
+        <article class="card"><p class="eyebrow">DATA STANDARD V5</p><h2>教师维护字段</h2><div class="field-list"><code>question_id</code><code>state</code><code>section</code><code>question_no</code><code>command_word</code><code>cognitive</code><code>skills</code><code>duplicate_group</code><code>source_url</code><code>teacher_note</code><code>high_value</code></div><p class="muted">Question ID 可以留空，系统会自动产生。skills 使用竖线分隔，例如 <code>fakta|sebab|KBAT</code>。</p><div class="warning-box"><strong>资料纪律</strong><p>同一原题被多个网站转载时，应使用相同 duplicate_group。教师审核后仍须保留原始来源。</p></div></article>
+      </div></section>
 
-      <section id="predictionView" class="view">
-        <div class="prediction-layout"><article class="card"><div class="card-head"><div><p class="eyebrow">PREDICTION BOARD</p><h2>质量修正后的复习优先级</h2></div></div><div id="predictionBoard"></div></article><aside class="card explain"><p class="eyebrow">HOW TO READ</p><h2>如何理解分数</h2><p>同一重复题群组不会被多次完整计分；未验证、字段不完整、旧课程和样本不足会降低分数与置信度。</p><div class="legend"><span><b class="dot high"></b>80–100 高优先</span><span><b class="dot medium"></b>65–79 较高优先</span><span><b class="dot normal"></b>50–64 中等优先</span><span><b class="dot low"></b>0–49 基础复习</span></div><p class="muted">这是一张复习资源分配地图，不是“今年必出题”承诺。</p></aside></div>
-      </section>
+      <section id="predictionView" class="view"><div class="prediction-layout"><article class="card"><div class="card-head"><div><p class="eyebrow">PREDICTION BOARD</p><h2>质量修正后的复习优先级</h2></div></div><div id="predictionBoard"></div></article><aside class="card explain"><p class="eyebrow">HOW TO READ</p><h2>如何理解分数</h2><p>同一重复题群组不会被多次完整计分；未验证、字段不完整、旧课程和样本不足会降低分数与置信度。</p><div class="legend"><span><b class="dot high"></b>80–100 高优先</span><span><b class="dot medium"></b>65–79 较高优先</span><span><b class="dot normal"></b>50–64 中等优先</span><span><b class="dot low"></b>0–49 基础复习</span></div><p class="muted">这是一张复习资源分配地图，不是“今年必出题”承诺。</p></aside></div></section>
 
-      <section id="methodView" class="view">
-        <article class="card method-card"><p class="eyebrow">SCORING MODEL V4</p><h2>透明预测公式</h2><div class="formula">基础信号评分 × 资料质量系数 × 独立来源系数 − 课程风险与重复惩罚</div><div class="method-grid"><div><h3>基础信号</h3><p>近期正式题、课程重要度、覆盖缺口、Trial 共识、题型适配与技能重复。</p></div><div><h3>质量修正</h3><p>来源、州属、Section、题号、命令词、技能、审核与链接越完整，记录权重越可靠。</p></div><div><h3>独立来源</h3><p>相同 duplicate_group 只有最佳记录获得完整权重，其余记录只作为共识证据。</p></div></div></article>
-      </section>
+      <section id="methodView" class="view"><article class="card method-card"><p class="eyebrow">SCORING MODEL V5</p><h2>透明预测公式</h2><div class="formula">基础信号评分 × 资料质量系数 × 独立来源系数 + 教师高价值标记 − 课程风险与重复惩罚</div><div class="method-grid"><div><h3>基础信号</h3><p>近期正式题、课程重要度、覆盖缺口、Trial 共识、题型适配与技能重复。</p></div><div><h3>教师审核</h3><p>教师可以修正分类、补充备注、标记高价值题，并把待审核资料转为已验证。</p></div><div><h3>独立来源</h3><p>相同 duplicate_group 只有最佳记录获得完整权重，其余记录只作为共识证据。</p></div></div></article></section>
     </main>
   </div>
+
+  <dialog id="questionDialog" class="question-dialog">
+    <form id="questionForm" method="dialog">
+      <div class="dialog-head"><div><p class="eyebrow">QUESTION EDITOR</p><h2 id="dialogTitle">新增题目</h2></div><button type="button" id="closeDialogBtn" class="icon-btn">×</button></div>
+      <input type="hidden" name="edit_key" />
+      <div class="form-grid">
+        <label>年份<input name="year" type="number" min="2010" max="2035" required /></label><label>科目<input name="subject" required value="Sejarah" /></label>
+        <label>Form<select name="form"><option>Form 4</option><option>Form 5</option></select></label><label>来源<input name="source" required placeholder="SPM / Trial Negeri" /></label>
+        <label>州属<input name="state" placeholder="National / Johor" /></label><label>Paper<input name="paper" required placeholder="Paper 2" /></label>
+        <label>Section<input name="section" placeholder="Bahagian A" /></label><label>题号<input name="question_no" placeholder="Q1(a)" /></label>
+        <label class="wide">章节<select name="chapter" id="editorChapter"></select></label><label class="wide">考点<input name="topic" required /></label>
+        <label>题型<input name="type" required placeholder="Struktur / Esei" /></label><label>分数<input name="marks" type="number" min="0" required /></label>
+        <label>Kata Tugas<input name="command_word" placeholder="Jelaskan" /></label><label>认知层级<input name="cognitive" placeholder="Memahami / KBAT" /></label>
+        <label class="wide">技能标签<input name="skills" placeholder="fakta|sebab|KBAT" /></label><label>重复群组<input name="duplicate_group" /></label>
+        <label class="wide">来源链接<input name="source_url" type="url" /></label><label class="wide">教师备注<textarea name="teacher_note" rows="3"></textarea></label>
+      </div>
+      <div class="check-row"><label><input name="verified" type="checkbox" /> 已验证</label><label><input name="high_value" type="checkbox" /> 高价值题</label></div>
+      <div class="dialog-actions"><button type="button" id="deleteQuestionBtn" class="danger-btn hidden">删除</button><span></span><button type="button" id="cancelDialogBtn" class="secondary">取消</button><button type="submit" class="primary-btn">保存题目</button></div>
+    </form>
+  </dialog>
+
   <script src="app.js"></script>
+  <script src="teacher.js"></script>
 </body>
 </html>
