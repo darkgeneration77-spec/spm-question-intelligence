@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>拼音王国 World 7：变调火山</title>
+  <style>
+    :root{--ink:#2b2d42;--orange:#f76707;--red:#d9480f;--yellow:#ffd43b;--green:#2f9e44;--blue:#4c6ef5;--card:#fff}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:"Arial Rounded MT Bold","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);background:linear-gradient(180deg,#ffe8cc,#fff3bf)}
+    button{font:inherit}.app{max-width:980px;margin:auto;padding:16px}.hero,.panel{background:rgba(255,255,255,.96);border-radius:28px;padding:18px;box-shadow:0 12px 30px rgba(43,45,66,.12)}
+    .hero{text-align:center}.hero h1{margin:0;font-size:clamp(30px,7vw,54px)}.hero p{margin:8px 0 0;font-size:18px}.panel{margin-top:14px}.hidden{display:none!important}
+    .lesson-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.lesson{background:#fff4e6;border:3px solid #ffd8a8;border-radius:22px;padding:14px}.lesson h3{margin:0 0 8px}.rule{font-size:20px;font-weight:700}.example{margin-top:8px;color:#5f3dc4}
+    .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.pill{background:#fff4e6;color:#d9480f;padding:8px 12px;border-radius:999px}.progress{height:16px;background:#e9ecef;border-radius:999px;overflow:hidden;margin:14px 0}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--yellow),var(--orange),var(--red));transition:.3s}
+    .battle{display:grid;grid-template-columns:1fr 1.3fr;gap:14px}.fighter,.boss{border-radius:24px;padding:14px;text-align:center}.fighter{background:#f8f9fa}.boss{background:#fff0f0}.face{font-size:68px}.hp{height:14px;background:#dee2e6;border-radius:999px;overflow:hidden;margin-top:8px}.hp span{display:block;height:100%;transition:.3s}.fighter .hp span{background:var(--green)}.boss .hp span{background:var(--red)}
+    .question{text-align:center;font-size:clamp(27px,6vw,46px);padding:18px 8px}.hint{text-align:center;color:#667085;margin-bottom:12px}.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.answer{min-height:84px;border:3px solid #e9ecef;background:#fff;border-radius:22px;font-size:28px;cursor:pointer}.answer.correct{background:#d3f9d8;border-color:var(--green)}.answer.wrong{background:#ffe3e3;border-color:var(--red)}
+    .combo{text-align:center;font-size:24px;color:var(--orange);min-height:34px}.message{text-align:center;min-height:44px;background:#f8f9fa;border-radius:18px;padding:12px;margin-top:12px}.skills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}.skill,.primary,.secondary{border:0;border-radius:18px;padding:12px 16px;cursor:pointer}.skill{border:2px solid #e9ecef;background:white}.skill:disabled{opacity:.45}.primary{background:var(--orange);color:white}.secondary{background:#f1f3f5;color:var(--ink)}
+    .reward{text-align:center}.reward .big{font-size:86px}.stars{font-size:28px;letter-spacing:4px}.shake{animation:shake .35s}@keyframes shake{25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-5px)}}
+    @media(max-width:680px){.lesson-grid,.battle,.answers{grid-template-columns:1fr}.face{font-size:58px}}
+  </style>
+</head>
+<body>
+<main class="app">
+  <section class="hero">
+    <h1>🌋 变调火山</h1>
+    <p>看清前后声调，阻止火龙喷火！</p>
+  </section>
+
+  <section id="lessonPanel" class="panel">
+    <h2>先学四个秘密</h2>
+    <div class="lesson-grid">
+      <div class="lesson"><h3>“一”的变调</h3><div class="rule">遇四声，读 yí；遇一、二、三声，读 yì。</div><div class="example">一个 yí gè　一天 yì tiān</div></div>
+      <div class="lesson"><h3>“不”的变调</h3><div class="rule">遇四声，读 bú；其他通常读 bù。</div><div class="example">不是 bú shì　不好 bù hǎo</div></div>
+      <div class="lesson"><h3>上声变调</h3><div class="rule">两个第三声连在一起，前一个变第二声。</div><div class="example">很好：hén hǎo</div></div>
+      <div class="lesson"><h3>“啊”的变调</h3><div class="rule">根据前一个音节结尾，读成呀、哇、哪等。</div><div class="example">花啊 huā ya　好啊 hǎo wa</div></div>
+    </div>
+    <button id="startBtn" class="primary" type="button" style="width:100%;margin-top:14px">开始火山挑战</button>
+  </section>
+
+  <section id="gamePanel" class="panel hidden">
+    <div class="top"><button id="backBtn" class="secondary" type="button">← 返回拼音王国</button><span class="pill" id="round">第 1 / 30 题</span><span class="pill">⭐ <span id="score">0</span></span></div>
+    <div class="progress"><span id="progress"></span></div>
+    <div class="battle">
+      <div id="fighter" class="fighter"><div class="face">🐰</div><strong>小兔勇士</strong><div class="hp"><span id="playerHp" style="width:100%"></span></div><div id="playerHpText">100 HP</div></div>
+      <div id="boss" class="boss"><div class="face">🐉</div><strong>变调火龙</strong><div class="hp"><span id="bossHp" style="width:100%"></span></div><div id="bossHpText">3000 HP</div></div>
+    </div>
+    <div id="combo" class="combo"></div>
+    <div id="question" class="question">准备开始</div>
+    <div id="hint" class="hint">选出正确读音。</div>
+    <div id="answers" class="answers"></div>
+    <div class="skills"><button id="hintSkill" class="skill" type="button">💡 提示 × 3</button><button id="shieldSkill" class="skill" type="button">🛡️ 护盾 × 1</button></div>
+    <div id="message" class="message">看前后声调再决定。</div>
+  </section>
+
+  <section id="rewardPanel" class="panel reward hidden">
+    <div class="big">🏆</div><h2>变调火龙被打败了！</h2><div id="stars" class="stars">⭐⭐⭐</div><p id="summary"></p>
+    <button id="againBtn" class="primary" type="button">再玩一次</button><button id="homeBtn" class="secondary" type="button">回到拼音王国</button>
+  </section>
+</main>
+<script>
+  const questions=[
+    {q:'“一个”里的“一”怎么读？',a:'yí',c:['yī','yí','yǐ','yì'],tip:'“个”是第四声，所以“一”读 yí。'},
+    {q:'“一天”里的“一”怎么读？',a:'yì',c:['yī','yí','yǐ','yì'],tip:'“天”是第一声，所以“一”读 yì。'},
+    {q:'“一年”里的“一”怎么读？',a:'yì',c:['yī','yí','yǐ','yì'],tip:'“年”是第二声，所以“一”读 yì。'},
+    {q:'“一本”里的“一”怎么读？',a:'yì',c:['yī','yí','yǐ','yì'],tip:'“本”是第三声，所以“一”读 yì。'},
+    {q:'单独数数时，“一”通常读？',a:'yī',c:['yī','yí','yǐ','yì'],tip:'单独使用时保持原调 yī。'},
+    {q:'“不是”里的“不”怎么读？',a:'bú',c:['bū','bú','bǔ','bù'],tip:'“是”是第四声，所以“不”读 bú。'},
+    {q:'“不要”里的“不”怎么读？',a:'bú',c:['bū','bú','bǔ','bù'],tip:'“要”是第四声，所以“不”读 bú。'},
+    {q:'“不好”里的“不”怎么读？',a:'bù',c:['bū','bú','bǔ','bù'],tip:'“好”是第三声，所以“不”保持 bù。'},
+    {q:'“不能”里的“不”怎么读？',a:'bù',c:['bū','bú','bǔ','bù'],tip:'“能”是第二声，所以“不”读 bù。'},
+    {q:'两个第三声连在一起，前一个通常变成？',a:'第二声',c:['第一声','第二声','第三声','第四声'],tip:'上声变调：前一个第三声变第二声。'},
+    {q:'“很好”的实际读法接近？',a:'hén hǎo',c:['hěn hǎo','hén hǎo','hēn hǎo','hèn hǎo'],tip:'两个第三声相连，前一个“很”变第二声。'},
+    {q:'“水果”的实际读法接近？',a:'shuí guǒ',c:['shuǐ guǒ','shuí guǒ','shuì guǒ','shuī guǒ'],tip:'两个第三声相连，前一个“水”变第二声。'},
+    {q:'“场所”的实际读法接近？',a:'cháng suǒ',c:['chǎng suǒ','cháng suǒ','chàng suǒ','chāng suǒ'],tip:'两个第三声相连，前一个变第二声。'},
+    {q:'“洗澡水”常见变调是？',a:'xí záo shuǐ',c:['xǐ zǎo shuǐ','xí záo shuǐ','xǐ záo shuǐ','xì zào shuǐ'],tip:'三个第三声连读时，前两个常读第二声。'},
+    {q:'“花啊”里的“啊”常读成？',a:'呀 ya',c:['呀 ya','哇 wa','哪 na','啊 a'],tip:'前面是 a 音，通常读成“呀”。'},
+    {q:'“好啊”里的“啊”常读成？',a:'哇 wa',c:['呀 ya','哇 wa','哪 na','啊 a'],tip:'前面结尾是 u/ao/ou 等，常读“哇”。'},
+    {q:'“天啊”里的“啊”常读成？',a:'哪 na',c:['呀 ya','哇 wa','哪 na','啊 a'],tip:'前面以 n 结尾，常读“哪”。'},
+    {q:'“望啊”里的“啊”常读成？',a:'nga',c:['ya','wa','na','nga'],tip:'前面以 ng 结尾，常读 nga。'},
+    {q:'“孩子啊”里的“啊”常读成？',a:'za',c:['ya','wa','za','ra'],tip:'zi、ci、si 后面常读 za。'},
+    {q:'“事啊”里的“啊”常读成？',a:'ra',c:['ya','wa','za','ra'],tip:'zhi、chi、shi、ri 后面常读 ra。'},
+    {q:'哪一句的“不”要读 bú？',a:'不会',c:['不好','不能','不会','不来'],tip:'“会”是第四声。'},
+    {q:'哪一句的“一”要读 yí？',a:'一个',c:['一天','一年','一本','一个'],tip:'“个”是第四声。'},
+    {q:'哪一句出现上声变调？',a:'很好',c:['很好','天空','白云','太阳'],tip:'“很”和“好”都是第三声。'},
+    {q:'“老鼠”常见实际读法接近？',a:'láo shǔ',c:['lǎo shǔ','láo shǔ','lào shǔ','lāo shǔ'],tip:'两个第三声相连，前一个变第二声。'},
+    {q:'“买手表”根据词组可读作？',a:'mǎi shóu biǎo',c:['mǎi shǒu biǎo','mǎi shóu biǎo','mái shǒu biǎo','mài shǒu biǎo'],tip:'按词组“手表”处理，中间的“手”变第二声。'},
+    {q:'“一”后面是第四声时，应该读？',a:'第二声',c:['第一声','第二声','第三声','第四声'],tip:'“一”遇第四声，变读第二声。'},
+    {q:'“不”后面是第四声时，应该读？',a:'第二声',c:['第一声','第二声','第三声','第四声'],tip:'“不”遇第四声，变读第二声。'},
+    {q:'“一”后面是一、二、三声时，通常读？',a:'第四声',c:['第一声','第二声','第三声','第四声'],tip:'“一”遇一、二、三声，通常变读第四声。'},
+    {q:'上声变调主要发生在什么情况？',a:'第三声相连',c:['第一声相连','第二声相连','第三声相连','第四声相连'],tip:'上声就是第三声。'},
+    {q:'哪一个属于“啊”的变调？',a:'花啊→花呀',c:['花啊→花呀','不是→bú shì','很好→hén hǎo','一个→yí gè'],tip:'“花啊”中的“啊”读成“呀”。'}
+  ];
+  const $=id=>document.getElementById(id);let order=[],index=0,score=0,combo=0,player=100,boss=3000,locked=false,hints=3,shield=1,shieldOn=false,correct=0;
+  function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+  function start(){order=shuffle(questions);index=0;score=0;combo=0;player=100;boss=3000;locked=false;hints=3;shield=1;shieldOn=false;correct=0;$('lessonPanel').classList.add('hidden');$('rewardPanel').classList.add('hidden');$('gamePanel').classList.remove('hidden');update();render()}
+  function render(){locked=false;const item=order[index];$('round').textContent=`第 ${index+1} / ${order.length} 题`;$('progress').style.width=`${index/order.length*100}%`;$('question').textContent=item.q;$('hint').textContent='看前后声调再判断。';$('answers').innerHTML='';shuffle(item.c).forEach(choice=>{const b=document.createElement('button');b.type='button';b.className='answer';b.textContent=choice;b.addEventListener('click',()=>answer(b,choice,item));$('answers').appendChild(b)});$('message').textContent='选出正确答案。';updateSkills()}
+  function answer(btn,choice,item){if(locked)return;locked=true;const buttons=[...document.querySelectorAll('.answer')];if(choice===item.a){btn.classList.add('correct');combo++;correct++;const damage=100+Math.min(combo,5)*20;score+=damage;boss=Math.max(0,boss-damage);$('boss').classList.add('shake');setTimeout(()=>$('boss').classList.remove('shake'),350);$('message').textContent=`答对了！${item.tip}`;}else{btn.classList.add('wrong');combo=0;const right=buttons.find(x=>x.textContent===item.a);if(right)right.classList.add('correct');if(shieldOn){shieldOn=false;$('message').textContent=`护盾挡住火焰！正确答案是“${item.a}”。${item.tip}`;}else{player=Math.max(0,player-10);$('fighter').classList.add('shake');setTimeout(()=>$('fighter').classList.remove('shake'),350);$('message').textContent=`差一点。正确答案是“${item.a}”。${item.tip}`;}}buttons.forEach(x=>x.disabled=true);update();setTimeout(()=>{index++;if(index>=order.length||boss<=0)finish();else render()},1500)}
+  function update(){$('score').textContent=score;$('playerHp').style.width=player+'%';$('playerHpText').textContent=player+' HP';$('bossHp').style.width=(boss/3000*100)+'%';$('bossHpText').textContent=boss+' HP';$('combo').textContent=combo>=10?'🔥 LEGEND ×'+combo:combo>=5?'⚡ ULTRA ×'+combo:combo>=2?'🔥 COMBO ×'+combo:'';updateSkills()}
+  function updateSkills(){$('hintSkill').textContent='💡 提示 × '+hints;$('shieldSkill').textContent=shieldOn?'🛡️ 护盾已开启':'🛡️ 护盾 × '+shield;$('hintSkill').disabled=hints<=0||locked;$('shieldSkill').disabled=shield<=0||shieldOn||locked}
+  function finish(){$('gamePanel').classList.add('hidden');$('rewardPanel').classList.remove('hidden');const rate=Math.round(correct/order.length*100);$('stars').textContent=rate>=90?'⭐⭐⭐':rate>=70?'⭐⭐':'⭐';$('summary').textContent=`答对 ${correct} / ${order.length} 题，正确率 ${rate}%，获得 ${score} 分。`;localStorage.setItem('pinyin-world7-complete','1')}
+  $('startBtn').addEventListener('click',start);$('againBtn').addEventListener('click',start);$('backBtn').addEventListener('click',()=>location.href='index.html');$('homeBtn').addEventListener('click',()=>location.href='index.html');
+  $('hintSkill').addEventListener('click',()=>{if(hints<=0||locked)return;hints--;const item=order[index];const wrong=[...document.querySelectorAll('.answer')].filter(b=>b.textContent!==item.a);shuffle(wrong).slice(0,2).forEach(b=>{b.disabled=true;b.style.opacity='.28'});$('hint').textContent='已经排除两个错误答案。';updateSkills()});
+  $('shieldSkill').addEventListener('click',()=>{if(shield<=0||shieldOn||locked)return;shield--;shieldOn=true;$('message').textContent='护盾开启！下一次答错不会扣血。';updateSkills()});
+</script>
+</body>
+</html>
