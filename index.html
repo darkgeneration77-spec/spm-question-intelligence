@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="SPM 历年题目趋势、题库导入与复习优先级分析系统" />
+  <meta name="description" content="SPM 历年题目趋势、题库导入、资料质量与复习优先级分析系统" />
   <title>SPM Question Intelligence</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="phase2.css" />
@@ -16,17 +16,18 @@
         <button class="nav-item active" data-view="dashboard">总览 Dashboard</button>
         <button class="nav-item" data-view="questions">历年题库 Questions</button>
         <button class="nav-item" data-view="catalog">章节目录 Catalog</button>
+        <button class="nav-item" data-view="quality">资料质量 Data Quality</button>
         <button class="nav-item" data-view="import">导入资料 Import</button>
         <button class="nav-item" data-view="prediction">趋势预测 Prediction</button>
         <button class="nav-item" data-view="method">评分方法 Method</button>
       </nav>
-      <div class="notice"><strong>重要说明</strong><p>预测分数表示复习优先级，不代表真实出题概率。导入资料必须核对来源、课程版本与版权状态。</p></div>
+      <div class="notice"><strong>重要说明</strong><p>预测分数表示复习优先级，不代表真实出题概率。系统会主动降低未验证、重复或资料不完整记录的权重。</p></div>
     </aside>
 
     <main>
       <header class="topbar">
-        <div><p class="eyebrow">KSSM · QUESTION INTELLIGENCE</p><h1>SPM 历年题目智能分析</h1><p class="subtitle">导入历年题目，按科目、Form、章节、年份、来源和题型分类，再计算透明、可审核的复习优先级。</p></div>
-        <div class="status"><span></span>Phase 3 · Sejarah Taxonomy</div>
+        <div><p class="eyebrow">KSSM · QUESTION INTELLIGENCE</p><h1>SPM 历年题目智能分析</h1><p class="subtitle">以独立题目记录、来源验证、章节覆盖、重复题群组和透明评分，建立可审核的十年趋势分析。</p></div>
+        <div class="status"><span></span>Phase 4 · Data Engine</div>
       </header>
 
       <section class="filters card">
@@ -38,40 +39,49 @@
         <label>题型<select id="typeFilter"><option value="all">全部题型</option></select></label>
         <label>来源<select id="sourceFilter"><option value="all">全部来源</option></select></label>
         <label>审核<select id="verifyFilter"><option value="all">全部状态</option><option value="verified">已验证</option><option value="pending">待审核</option></select></label>
-        <label class="search-label">搜索考点<input id="searchInput" placeholder="例如：Bab 8、pilihan raya、实验、函数" /></label>
+        <label class="search-label">搜索考点<input id="searchInput" placeholder="章节、考点、kata tugas、技能、题号" /></label>
         <button id="resetBtn" class="secondary">重置</button>
       </section>
 
       <section id="dashboardView" class="view active">
         <div class="stats" id="stats"></div>
         <div class="grid two">
-          <article class="card"><div class="card-head"><div><p class="eyebrow">TREND HEATMAP</p><h2>章节年度热度</h2></div><span class="chip">按总分加权</span></div><div id="heatmap" class="heatmap"></div></article>
-          <article class="card"><div class="card-head"><div><p class="eyebrow">TOP PRIORITIES</p><h2>高优先复习考点</h2></div><span class="chip">透明评分</span></div><div id="priorityList"></div></article>
+          <article class="card"><div class="card-head"><div><p class="eyebrow">TREND HEATMAP</p><h2>章节年度热度</h2></div><span class="chip">按有效分数加权</span></div><div id="heatmap" class="heatmap"></div></article>
+          <article class="card"><div class="card-head"><div><p class="eyebrow">TOP PRIORITIES</p><h2>高优先复习考点</h2></div><span class="chip">质量修正评分</span></div><div id="priorityList"></div></article>
         </div>
-        <article class="card"><div class="card-head"><div><p class="eyebrow">YEARLY COVERAGE</p><h2>近年题量与分数走势</h2></div></div><div id="bars" class="bars"></div></article>
+        <article class="card"><div class="card-head"><div><p class="eyebrow">YEARLY COVERAGE</p><h2>近年有效分数走势</h2></div></div><div id="bars" class="bars"></div></article>
       </section>
 
       <section id="questionsView" class="view">
-        <article class="card"><div class="card-head"><div><p class="eyebrow">QUESTION BANK</p><h2>历年题目记录</h2></div><div class="head-actions"><button id="exportBtn" class="secondary small">导出 CSV</button><span id="resultCount" class="chip"></span></div></div><div class="table-wrap"><table><thead><tr><th>年份</th><th>科目</th><th>Form</th><th>来源</th><th>试卷</th><th>章节 / 考点</th><th>题型</th><th>分数</th><th>验证</th></tr></thead><tbody id="questionTable"></tbody></table></div></article>
+        <article class="card"><div class="card-head"><div><p class="eyebrow">QUESTION BANK</p><h2>标准化题目记录</h2></div><div class="head-actions"><button id="exportBtn" class="secondary small">导出 CSV</button><span id="resultCount" class="chip"></span></div></div><div class="table-wrap"><table><thead><tr><th>ID / 年份</th><th>科目 / Form</th><th>来源 / 州属</th><th>试卷位置</th><th>章节 / 考点</th><th>命令词 / 技能</th><th>题型</th><th>分数</th><th>质量</th></tr></thead><tbody id="questionTable"></tbody></table></div></article>
       </section>
 
       <section id="catalogView" class="view">
         <article class="card"><div class="card-head"><div><p class="eyebrow">SEJARAH KSSM TAXONOMY</p><h2>Form 4 + Form 5 完整章节目录</h2></div><span class="chip">20 Chapters</span></div><div id="chapterCatalog" class="catalog-grid"></div></article>
       </section>
 
+      <section id="qualityView" class="view">
+        <div class="stats" id="qualityStats"></div>
+        <div class="grid two quality-layout">
+          <article class="card"><div class="card-head"><div><p class="eyebrow">COVERAGE AUDIT</p><h2>章节资料完整度</h2></div><span class="chip">题数 + 年份 + 验证</span></div><div id="coverageAudit"></div></article>
+          <article class="card"><div class="card-head"><div><p class="eyebrow">DUPLICATE CONTROL</p><h2>重复题群组</h2></div><span class="chip">避免重复加权</span></div><div id="duplicateAudit"></div></article>
+        </div>
+        <article class="card"><div class="card-head"><div><p class="eyebrow">REVIEW QUEUE</p><h2>优先人工审核清单</h2></div></div><div id="reviewQueue"></div></article>
+      </section>
+
       <section id="importView" class="view">
         <div class="import-grid">
-          <article class="card"><p class="eyebrow">CSV IMPORT</p><h2>批量导入题库</h2><p class="muted">先下载模板，每一道题填写一行。新增 <code>form</code> 字段后，系统会自动按年级与章节归类。</p><div class="dropzone"><input id="csvFile" type="file" accept=".csv,text/csv" /><strong>选择 CSV 文件</strong><span>UTF-8 编码，第一行必须是字段名称</span></div><div class="import-actions"><a class="button-link" href="question-template.csv" download>下载 CSV 模板</a><button id="clearImportedBtn" class="secondary">清除本机导入资料</button></div><div id="importResult" class="import-result muted">尚未导入文件。</div></article>
-          <article class="card"><p class="eyebrow">REQUIRED FIELDS</p><h2>数据标准</h2><div class="field-list"><code>year</code><code>subject</code><code>form</code><code>source</code><code>paper</code><code>chapter</code><code>topic</code><code>type</code><code>marks</code><code>curriculum</code><code>verified</code></div><p class="muted">Sejarah 建议严格使用章节目录中的正式名称，避免同一章节因不同写法被拆成多个统计项目。</p><div class="warning-box"><strong>资料纪律</strong><p>旧课程与 KSSM 必须分开；Trial 来源要写清州属；同一题被多个网站转载时，只算一个独立来源。</p></div></article>
+          <article class="card"><p class="eyebrow">CSV IMPORT</p><h2>批量导入题库</h2><p class="muted">每一道题填写一行。系统会生成 Question ID、检查必填栏、检测完全重复，并根据资料完整度计算质量分。</p><div class="dropzone"><input id="csvFile" type="file" accept=".csv,text/csv" /><strong>选择 CSV 文件</strong><span>UTF-8 编码，第一行必须是字段名称</span></div><div class="import-actions"><a class="button-link" href="question-template.csv" download>下载新版 CSV 模板</a><button id="clearImportedBtn" class="secondary">清除本机导入资料</button></div><div id="importResult" class="import-result muted">尚未导入文件。</div></article>
+          <article class="card"><p class="eyebrow">DATA STANDARD V4</p><h2>新增核心字段</h2><div class="field-list"><code>question_id</code><code>state</code><code>section</code><code>question_no</code><code>command_word</code><code>cognitive</code><code>skills</code><code>duplicate_group</code><code>source_url</code></div><p class="muted">Question ID 可以留空，系统会自动产生。skills 使用竖线分隔，例如 <code>fakta|sebab|KBAT</code>。</p><div class="warning-box"><strong>资料纪律</strong><p>同一原题被多个网站转载时，应使用相同 duplicate_group。系统只让每个重复群组中的最高质量记录获得完整权重。</p></div></article>
         </div>
       </section>
 
       <section id="predictionView" class="view">
-        <div class="prediction-layout"><article class="card"><div class="card-head"><div><p class="eyebrow">PREDICTION BOARD</p><h2>复习优先级排名</h2></div></div><div id="predictionBoard"></div></article><aside class="card explain"><p class="eyebrow">HOW TO READ</p><h2>如何理解分数</h2><p>系统在同一科目与同一 Form 内，综合正式真题近期频率、课程重要度、覆盖缺口、Trial 共识、题型适配、技能重复和审核状态。</p><div class="legend"><span><b class="dot high"></b>80–100 高优先</span><span><b class="dot medium"></b>65–79 较高优先</span><span><b class="dot normal"></b>50–64 中等优先</span><span><b class="dot low"></b>0–49 基础复习</span></div><p class="muted">未验证、旧课程、样本太少和重复来源都会降低置信度。</p></aside></div>
+        <div class="prediction-layout"><article class="card"><div class="card-head"><div><p class="eyebrow">PREDICTION BOARD</p><h2>质量修正后的复习优先级</h2></div></div><div id="predictionBoard"></div></article><aside class="card explain"><p class="eyebrow">HOW TO READ</p><h2>如何理解分数</h2><p>同一重复题群组不会被多次完整计分；未验证、字段不完整、旧课程和样本不足会降低分数与置信度。</p><div class="legend"><span><b class="dot high"></b>80–100 高优先</span><span><b class="dot medium"></b>65–79 较高优先</span><span><b class="dot normal"></b>50–64 中等优先</span><span><b class="dot low"></b>0–49 基础复习</span></div><p class="muted">这是一张复习资源分配地图，不是“今年必出题”承诺。</p></aside></div>
       </section>
 
       <section id="methodView" class="view">
-        <article class="card method-card"><p class="eyebrow">SCORING MODEL V3</p><h2>透明预测公式</h2><div class="formula">25% 近期正式题频率 + 20% 课程重要度 + 15% 覆盖缺口 + 15% Trial 共识 + 10% 题型适配 + 10% 技能重复 + 5% 教师审核 − 课程与资料风险扣分</div><div class="method-grid"><div><h3>先过滤</h3><p>科目、Form、课程版本、正式程度、年份衰减、重复来源、试卷格式与资料验证。</p></div><div><h3>再评分</h3><p>只在同一科目、同一 Form 和同一章节内聚合，避免不同年级互相污染。</p></div><div><h3>最后审核</h3><p>系统输出优先级、依据、最近出现年份、样本量、主要题型与置信度，教师保留最终决定权。</p></div></div></article>
+        <article class="card method-card"><p class="eyebrow">SCORING MODEL V4</p><h2>透明预测公式</h2><div class="formula">基础信号评分 × 资料质量系数 × 独立来源系数 − 课程风险与重复惩罚</div><div class="method-grid"><div><h3>基础信号</h3><p>近期正式题、课程重要度、覆盖缺口、Trial 共识、题型适配与技能重复。</p></div><div><h3>质量修正</h3><p>来源、州属、Section、题号、命令词、技能、审核与链接越完整，记录权重越可靠。</p></div><div><h3>独立来源</h3><p>相同 duplicate_group 只有最佳记录获得完整权重，其余记录只作为共识证据。</p></div></div></article>
       </section>
     </main>
   </div>
