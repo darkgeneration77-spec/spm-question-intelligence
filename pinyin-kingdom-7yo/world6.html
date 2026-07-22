@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>拼音王国 World 6：拼读列车</title>
+<style>
+:root{--ink:#24324a;--blue:#4c6ef5;--purple:#845ef7;--green:#2f9e44;--red:#e03131;--gold:#f59f00}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:"Arial Rounded MT Bold","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);background:linear-gradient(180deg,#dff7ff,#fff4cc)}button{font:inherit}.app{max-width:980px;margin:auto;padding:16px}.hero,.panel{background:rgba(255,255,255,.95);border-radius:28px;padding:18px;box-shadow:0 12px 30px rgba(36,50,74,.12)}.hero{text-align:center}.hero h1{margin:0;font-size:clamp(30px,7vw,54px)}.hero p{margin:8px 0 0;font-size:18px}.panel{margin-top:14px}.hidden{display:none!important}.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.pill{background:#edf2ff;color:#364fc7;padding:8px 12px;border-radius:999px}.progress{height:16px;background:#e9ecef;border-radius:999px;overflow:hidden;margin:14px 0}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));width:0;transition:.3s}.lesson{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{background:#f8f9fa;border-radius:20px;padding:14px;text-align:center}.formula{font-size:34px;margin:8px 0}.primary,.secondary{border:0;border-radius:18px;padding:14px 18px;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#f1f3f5;color:var(--ink)}.battle{display:grid;grid-template-columns:1fr 1.3fr;gap:14px}.fighter,.boss{border-radius:24px;padding:14px;text-align:center}.fighter{background:#f8f9fa}.boss{background:#fff3bf}.face{font-size:68px}.hp{height:14px;background:#dee2e6;border-radius:999px;overflow:hidden;margin-top:8px}.hp span{display:block;height:100%;transition:.3s}.fighter .hp span{background:var(--green)}.boss .hp span{background:var(--red)}.question{text-align:center;font-size:clamp(28px,6vw,46px);padding:18px 8px}.build{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;font-size:38px;margin:8px 0}.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.answer{min-height:84px;border:3px solid #e9ecef;background:#fff;border-radius:22px;font-size:30px;cursor:pointer}.answer.correct{background:#d3f9d8;border-color:var(--green)}.answer.wrong{background:#ffe3e3;border-color:var(--red)}.combo{text-align:center;font-size:24px;color:var(--gold);min-height:34px}.message{text-align:center;min-height:44px;background:#f8f9fa;border-radius:18px;padding:12px;margin-top:12px}.skills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}.skill{border:2px solid #e9ecef;background:white;border-radius:16px;padding:9px 13px;cursor:pointer}.reward{text-align:center}.reward .big{font-size:86px}.stars{font-size:28px;letter-spacing:4px}.shake{animation:shake .35s}@keyframes shake{25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-5px)}}@media(max-width:680px){.lesson,.battle,.answers{grid-template-columns:1fr}.face{font-size:58px}}
+</style>
+</head>
+<body>
+<main class="app">
+<section class="hero"><h1>🚂 拼读列车</h1><p>把声母和韵母拼起来，让列车冲过终点！</p></section>
+<section id="learnPanel" class="panel">
+<h2>先学会拼读</h2>
+<div class="lesson">
+<div class="card"><strong>两拼音节</strong><div class="formula">b + a = ba</div><p>先读声母，再读韵母，快速连起来。</p></div>
+<div class="card"><strong>三拼音节</strong><div class="formula">j + i + a = jia</div><p>声母、介母、韵母，轻快连读。</p></div>
+<div class="card"><strong>整体认读</strong><div class="formula">zhi · chi · shi</div><p>看见就整体读，不要拆开。</p></div>
+</div>
+<p style="text-align:center"><button id="startBtn" class="primary" type="button">开始发车</button></p>
+</section>
+<section id="gamePanel" class="panel hidden">
+<div class="top"><button id="backBtn" class="secondary" type="button">← 返回</button><span class="pill" id="round">第 1 / 30 题</span><span class="pill">⭐ <span id="score">0</span></span></div>
+<div class="progress"><span id="progress"></span></div>
+<div class="battle">
+<div id="fighter" class="fighter"><div class="face">🐰🚃</div><strong>小兔列车长</strong><div class="hp"><span id="playerHp" style="width:100%"></span></div><div id="playerHpText">100 HP</div></div>
+<div id="boss" class="boss"><div class="face">🤖🚂</div><strong>拼读机器人</strong><div class="hp"><span id="bossHp" style="width:100%"></span></div><div id="bossHpText">3000 HP</div></div>
+</div>
+<div id="combo" class="combo"></div>
+<div id="build" class="build"></div>
+<div id="question" class="question">准备开始</div>
+<div id="answers" class="answers"></div>
+<div class="skills"><button id="hintSkill" class="skill" type="button">💡 提示 × 3</button><button id="shieldSkill" class="skill" type="button">🛡️ 护盾 × 1</button></div>
+<div id="message" class="message">看清楚，再点击。</div>
+</section>
+<section id="rewardPanel" class="panel reward hidden"><div class="big">🏆</div><h2>拼读机器人被打败了！</h2><div id="stars" class="stars">⭐⭐⭐</div><p id="summary"></p><button id="againBtn" class="primary" type="button">再玩一次</button><button id="homeBtn" class="secondary" type="button">回到拼音王国</button></section>
+</main>
+<script>
+const questions=[
+{left:'b + a',q:'拼成哪一个音节？',a:'ba',c:['ba','pa','ma','fa'],tip:'b 和 a 连起来读 ba。'},
+{left:'p + o',q:'拼成哪一个音节？',a:'po',c:['bo','po','mo','fo'],tip:'p 和 o 连起来读 po。'},
+{left:'m + i',q:'拼成哪一个音节？',a:'mi',c:['mi','ni','li','bi'],tip:'m 和 i 连起来读 mi。'},
+{left:'f + u',q:'拼成哪一个音节？',a:'fu',c:['hu','fu','wu','pu'],tip:'f 和 u 连起来读 fu。'},
+{left:'d + a',q:'拼成哪一个音节？',a:'da',c:['ta','da','na','la'],tip:'d 和 a 连起来读 da。'},
+{left:'t + i',q:'拼成哪一个音节？',a:'ti',c:['di','ti','ni','li'],tip:'t 和 i 连起来读 ti。'},
+{left:'n + ü',q:'拼成哪一个音节？',a:'nü',c:['nu','nü','lü','yu'],tip:'n 遇 ü，要保留两点。'},
+{left:'l + ü',q:'拼成哪一个音节？',a:'lü',c:['lu','nü','lü','yu'],tip:'l 遇 ü，也要保留两点。'},
+{left:'g + e',q:'拼成哪一个音节？',a:'ge',c:['ke','he','ge','de'],tip:'g 和 e 连起来读 ge。'},
+{left:'k + ao',q:'拼成哪一个音节？',a:'kao',c:['gao','hao','kao','tao'],tip:'k 和 ao 连起来读 kao。'},
+{left:'h + ua',q:'拼成哪一个音节？',a:'hua',c:['gua','hua','kua','wa'],tip:'h 和 ua 连起来读 hua。'},
+{left:'j + i',q:'拼成哪一个音节？',a:'ji',c:['qi','xi','ji','zhi'],tip:'j 和 i 连起来读 ji。'},
+{left:'q + u',q:'正确写法是？',a:'qu',c:['qü','qu','qv','chu'],tip:'q 遇 ü，去掉两点，写 qu。'},
+{left:'x + ü',q:'正确写法是？',a:'xu',c:['xü','xu','xv','shu'],tip:'x 遇 ü，去掉两点，写 xu。'},
+{left:'j + i + a',q:'三拼音节是什么？',a:'jia',c:['jia','ja','ji','xia'],tip:'j、i、a 快速连读成 jia。'},
+{left:'q + i + ao',q:'三拼音节是什么？',a:'qiao',c:['qao','qiao','xiao','jiao'],tip:'q、i、ao 连读成 qiao。'},
+{left:'x + i + ong',q:'三拼音节是什么？',a:'xiong',c:['xong','xiong','qiong','xiang'],tip:'x、i、ong 连读成 xiong。'},
+{left:'g + u + a',q:'三拼音节是什么？',a:'gua',c:['ga','gua','hua','guo'],tip:'g、u、a 连读成 gua。'},
+{left:'k + u + ai',q:'三拼音节是什么？',a:'kuai',c:['kai','kuai','guai','kuan'],tip:'k、u、ai 连读成 kuai。'},
+{left:'h + u + ang',q:'三拼音节是什么？',a:'huang',c:['hang','huang','huan','guang'],tip:'h、u、ang 连读成 huang。'},
+{left:'zh + i',q:'整体认读音节是？',a:'zhi',c:['zi','zhi','chi','shi'],tip:'zhi 要整体认读。'},
+{left:'ch + i',q:'整体认读音节是？',a:'chi',c:['ci','chi','shi','ri'],tip:'chi 要整体认读。'},
+{left:'sh + i',q:'整体认读音节是？',a:'shi',c:['si','shi','chi','ri'],tip:'shi 要整体认读。'},
+{left:'r + i',q:'整体认读音节是？',a:'ri',c:['ri','zi','zhi','shi'],tip:'ri 要整体认读。'},
+{left:'z + i',q:'整体认读音节是？',a:'zi',c:['zhi','zi','ci','si'],tip:'zi 要整体认读。'},
+{left:'c + i',q:'整体认读音节是？',a:'ci',c:['chi','ci','si','zi'],tip:'ci 要整体认读。'},
+{left:'s + i',q:'整体认读音节是？',a:'si',c:['shi','si','zi','ci'],tip:'si 要整体认读。'},
+{left:'y + i',q:'整体认读音节是？',a:'yi',c:['yi','i','yu','yin'],tip:'yi 要整体认读。'},
+{left:'w + u',q:'整体认读音节是？',a:'wu',c:['u','wu','yu','wo'],tip:'wu 要整体认读。'},
+{left:'y + ü',q:'正确写法是？',a:'yu',c:['yü','yu','yv','ü'],tip:'y 遇 ü，去掉两点，写 yu。'}
+];
+const $=id=>document.getElementById(id);let order=[],index=0,score=0,combo=0,player=100,boss=3000,locked=false,hints=3,shield=1,shieldOn=false,correct=0;
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function start(){order=shuffle(questions);index=0;score=0;combo=0;player=100;boss=3000;locked=false;hints=3;shield=1;shieldOn=false;correct=0;$('learnPanel').classList.add('hidden');$('rewardPanel').classList.add('hidden');$('gamePanel').classList.remove('hidden');update();render()}
+function render(){locked=false;const item=order[index];$('round').textContent=`第 ${index+1} / ${order.length} 题`;$('progress').style.width=`${index/order.length*100}%`;$('build').textContent=item.left;$('question').textContent=item.q;$('answers').innerHTML='';shuffle(item.c).forEach(choice=>{const b=document.createElement('button');b.type='button';b.className='answer';b.textContent=choice;b.addEventListener('click',()=>answer(b,choice,item));$('answers').appendChild(b)});$('message').textContent='把声音快速连起来。';updateSkills()}
+function answer(btn,choice,item){if(locked)return;locked=true;const buttons=[...document.querySelectorAll('.answer')];if(choice===item.a){btn.classList.add('correct');combo++;correct++;let damage=100+Math.min(combo,5)*20;score+=damage;boss=Math.max(0,boss-damage);$('boss').classList.add('shake');setTimeout(()=>$('boss').classList.remove('shake'),350);$('message').textContent=`答对了！${item.tip}`;}else{btn.classList.add('wrong');combo=0;const right=buttons.find(x=>x.textContent===item.a);if(right)right.classList.add('correct');if(shieldOn){shieldOn=false;$('message').textContent=`护盾挡住攻击！正确答案是“${item.a}”。${item.tip}`;}else{player=Math.max(0,player-10);$('fighter').classList.add('shake');setTimeout(()=>$('fighter').classList.remove('shake'),350);$('message').textContent=`差一点。正确答案是“${item.a}”。${item.tip}`;}}buttons.forEach(x=>x.disabled=true);update();setTimeout(()=>{index++;if(index>=order.length||boss<=0)finish();else render()},1450)}
+function update(){$('score').textContent=score;$('playerHp').style.width=player+'%';$('playerHpText').textContent=player+' HP';$('bossHp').style.width=(boss/3000*100)+'%';$('bossHpText').textContent=boss+' HP';$('combo').textContent=combo>=10?'🔥 LEGEND ×'+combo:combo>=5?'⚡ ULTRA ×'+combo:combo>=2?'🔥 COMBO ×'+combo:'';updateSkills()}
+function updateSkills(){$('hintSkill').textContent='💡 提示 × '+hints;$('shieldSkill').textContent=shieldOn?'🛡️ 护盾已开启':'🛡️ 护盾 × '+shield;$('hintSkill').disabled=hints<=0||locked;$('shieldSkill').disabled=shield<=0||shieldOn||locked}
+function finish(){$('gamePanel').classList.add('hidden');$('rewardPanel').classList.remove('hidden');const rate=Math.round(correct/order.length*100);$('stars').textContent=rate>=90?'⭐⭐⭐':rate>=70?'⭐⭐':'⭐';$('summary').textContent=`答对 ${correct} / ${order.length} 题，正确率 ${rate}%，获得 ${score} 分。`;localStorage.setItem('pinyin-world6-complete','1')}
+$('startBtn').addEventListener('click',start);$('againBtn').addEventListener('click',start);$('homeBtn').addEventListener('click',()=>location.href='index.html');$('backBtn').addEventListener('click',()=>location.href='index.html');
+$('hintSkill').addEventListener('click',()=>{if(hints<=0||locked)return;hints--;const item=order[index];const wrong=[...document.querySelectorAll('.answer')].filter(b=>b.textContent!==item.a);shuffle(wrong).slice(0,2).forEach(b=>{b.disabled=true;b.style.opacity='.28'});$('message').textContent='已经帮你排除两个错误答案。';updateSkills()});
+$('shieldSkill').addEventListener('click',()=>{if(shield<=0||shieldOn||locked)return;shield--;shieldOn=true;$('message').textContent='护盾开启！下一次答错不会扣血。';updateSkills()});
+</script>
+</body>
+</html>
