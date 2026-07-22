@@ -5,7 +5,7 @@ let activeEditKey='';
 
 function teacherKey(q){return q._local_id||q.question_id||recordKey(q)}
 function makeLocalId(){return `LOCAL-${Date.now()}-${Math.random().toString(36).slice(2,7).toUpperCase()}`}
-function syncTeacherData(){saveImported();questions=[...seedQuestions,...imported];refreshFilters();render();renderTeacherWorkspace()}
+function syncTeacherData(){saveImported();questions=[...seedQuestions,...imported].map(enrichRecord);refreshFilters();render();renderTeacherWorkspace()}
 function editorChapters(form='Form 4',selected=''){
   const select=document.querySelector('#editorChapter');
   const values=sejarahCatalog[form]||uniq('chapter');
@@ -28,7 +28,7 @@ function openQuestionEditor(q=null){
 function formToTeacherRecord(){
   const fd=new FormData(teacherForm);const obj=Object.fromEntries(fd.entries());
   const old=imported.find(q=>teacherKey(q)===activeEditKey)||{};
-  return normalizeRecord({...old,...obj,verified:teacherForm.elements.verified.checked?'true':'false',high_value:teacherForm.elements.high_value.checked?'true':'false',question_id:old.question_id||'',official:old.official??.6,importance:old.importance??70,gap:old.gap??50,trial:old.trial??60,fit:old.fit??70,skill:old.skill??70,curriculum:old.curriculum||'KSSM',_local_id:old._local_id||makeLocalId(),teacher_note:obj.teacher_note||'',source_url:obj.source_url||'',duplicate_group:obj.duplicate_group||'',state:obj.state||'',section:obj.section||'',question_no:obj.question_no||'',command_word:obj.command_word||'',cognitive:obj.cognitive||'',skills:obj.skills||'',high_value:teacherForm.elements.high_value.checked});
+  return enrichRecord({...old,...obj,year:Number(obj.year),marks:Number(obj.marks),verified:teacherForm.elements.verified.checked,high_value:teacherForm.elements.high_value.checked,question_id:old.question_id||'',official:old.official??.6,importance:old.importance??70,gap:old.gap??50,trial:old.trial??60,fit:old.fit??70,skill:old.skill??70,curriculum:old.curriculum||'KSSM',_local_id:old._local_id||makeLocalId(),teacher_note:obj.teacher_note||'',source_url:obj.source_url||'',duplicate_group:obj.duplicate_group||'',state:obj.state||'',section:obj.section||'',question_no:obj.question_no||'',command_word:obj.command_word||'',cognitive:obj.cognitive||'',skills:obj.skills||''});
 }
 function renderTeacherWorkspace(){
   if(!teacherQueue)return;
