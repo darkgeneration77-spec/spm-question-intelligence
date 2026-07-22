@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>拼音王国 World 11：PK竞技场</title>
+<style>
+:root{--ink:#25314a;--blue:#4c6ef5;--purple:#845ef7;--orange:#ff922b;--green:#2f9e44;--card:#fff}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:"Arial Rounded MT Bold","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);background:linear-gradient(180deg,#dff7ff,#fff4cc)}button,input,select{font:inherit}.app{max-width:980px;margin:auto;padding:16px}.hero,.panel{background:rgba(255,255,255,.95);border-radius:28px;padding:18px;box-shadow:0 12px 30px rgba(37,49,74,.12)}.hero{text-align:center}.hero h1{margin:0;font-size:clamp(30px,7vw,54px)}.hero p{margin:8px 0 0;font-size:18px}.panel{margin-top:14px}.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.mode{border:3px solid #edf2f7;background:#fff;border-radius:22px;padding:16px;text-align:center;cursor:pointer}.mode.selected{border-color:var(--purple);background:#f3f0ff}.mode .icon{font-size:48px}.mode h2{margin:8px 0 4px}.field{display:grid;gap:6px;margin:12px 0}.field input,.field select{width:100%;padding:14px;border:3px solid #e9ecef;border-radius:16px;background:#fff;font-size:19px}.characters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.character{border:3px solid #edf2f7;background:#fff;border-radius:18px;padding:10px;text-align:center;cursor:pointer}.character.selected{border-color:var(--orange);background:#fff4e6}.character span{display:block;font-size:40px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.btn{border:0;border-radius:18px;padding:14px 18px;cursor:pointer;font-weight:700}.primary{background:var(--blue);color:#fff}.orange{background:var(--orange);color:#fff}.secondary{background:#f1f3f5;color:var(--ink)}.rules{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.rule{background:#f8f9fa;border-radius:18px;padding:12px;text-align:center}.rule strong{display:block;font-size:24px}.notice{margin-top:14px;padding:12px;border-radius:18px;background:#fff9db;text-align:center}.hidden{display:none!important}@media(max-width:720px){.modes,.characters,.actions,.rules{grid-template-columns:1fr 1fr}}@media(max-width:480px){.modes,.characters,.actions,.rules{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="app">
+<section class="hero"><h1>🏟️ World 11：PK竞技场</h1><p>2–8位学生同时抢答，速度、正确率和连击一起决定胜负。</p></section>
+<section class="panel">
+<h2>选择比赛模式</h2>
+<div class="modes" id="modes">
+<button class="mode selected" data-mode="speed" type="button"><div class="icon">⚡</div><h2>极速PK</h2><p>10题，每题8秒</p></button>
+<button class="mode" data-mode="boss" type="button"><div class="icon">🐉</div><h2>Boss Raid</h2><p>全班合作打Boss</p></button>
+<button class="mode" data-mode="survival" type="button"><div class="icon">❤️</div><h2>生存赛</h2><p>答错3次淘汰</p></button>
+</div>
+<div class="field"><label for="name">勇士名字</label><input id="name" maxlength="12" placeholder="例如：小美"></div>
+<h2>选择角色</h2>
+<div class="characters" id="characters"></div>
+<div class="actions">
+<button id="teacherBtn" class="btn orange" type="button">👑 老师创建房间</button>
+<button id="studentBtn" class="btn primary" type="button">🎮 学生加入房间</button>
+</div>
+<div id="joinBox" class="hidden">
+<div class="field"><label for="room">6位房间号码</label><input id="room" inputmode="numeric" maxlength="6" placeholder="例如：238641"></div>
+<button id="enterBtn" class="btn primary" style="width:100%" type="button">进入线上PK</button>
+</div>
+<div id="message" class="notice">老师先创建房间，再把6位号码告诉学生。</div>
+</section>
+<section class="panel"><h2>竞技场规则</h2><div class="rules"><div class="rule"><strong>+100</strong>答对基础分</div><div class="rule"><strong>+50</strong>速度奖励</div><div class="rule"><strong>×2</strong>连续5题Combo</div><div class="rule"><strong>2–8人</strong>同房间比赛</div></div></section>
+<section class="panel"><button id="homeBtn" class="btn secondary" type="button">← 回到拼音王国</button></section>
+</main>
+<script>
+const chars=[['🐰','小兔骑士'],['🦊','狐狸忍者'],['🐼','熊猫法师'],['🐸','青蛙战士'],['🐱','猫咪剑客'],['🐵','猴王'],['🦄','独角兽'],['🐲','小龙勇士']];
+let mode='speed',character='🐰';
+const $=id=>document.getElementById(id);
+chars.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.className='character'+(i===0?' selected':'');b.innerHTML=`<span>${c[0]}</span>${c[1]}`;b.addEventListener('click',()=>{document.querySelectorAll('.character').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');character=c[0]});$('characters').appendChild(b)});
+document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.mode').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');mode=b.dataset.mode}));
+function saveProfile(){sessionStorage.setItem('pkName',$('name').value.trim());sessionStorage.setItem('pkCharacter',character);sessionStorage.setItem('pkMode',mode)}
+$('teacherBtn').addEventListener('click',()=>{if(!$('name').value.trim()){ $('message').textContent='先写上老师或房主名字。';return}saveProfile();location.href='pk.html?host=1&mode='+encodeURIComponent(mode)});
+$('studentBtn').addEventListener('click',()=>{$('joinBox').classList.remove('hidden');$('message').textContent='输入老师给你的6位房间号码。'});
+$('enterBtn').addEventListener('click',()=>{const code=$('room').value.trim();if(!$('name').value.trim()){ $('message').textContent='先写上勇士名字。';return}if(!/^\d{6}$/.test(code)){ $('message').textContent='房间号码必须是6位数字。';return}saveProfile();location.href='pk.html?room='+code+'&mode='+encodeURIComponent(mode)});
+$('homeBtn').addEventListener('click',()=>location.href='index.html');
+</script>
+</body>
+</html>
