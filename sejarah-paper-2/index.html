@@ -9,17 +9,54 @@
 </head>
 <body>
 <div class="wrap">
-<section class="hero"><h1>SPM Sejarah Paper 2 – Latihan Fokus</h1><p>Pelajar mesti menjawab dahulu. Sistem menyemak jawapan sebelum memaparkan jawapan point form dan penerangan.</p><div class="stats"><div class="stat" id="totalStat">50 soalan</div><div class="stat">Tingkatan 4 + Tingkatan 5</div><div class="stat">Struktur + Esei + KBAT</div></div></section>
+<section class="hero"><h1>SPM Sejarah Paper 2 – Latihan Fokus</h1><p>Pelajar mesti menjawab dahulu. Sistem menyemak berdasarkan kata kunci, istilah seerti, singkatan dan konsep sejarah yang tepat — bukan ayat yang sama sepenuhnya.</p><div class="stats"><div class="stat" id="totalStat">50 soalan</div><div class="stat">Tingkatan 4 + Tingkatan 5</div><div class="stat">Struktur + Esei + KBAT</div></div></section>
 <div class="filters"><button class="active" onclick="filterSet('all',this)">Semua</button><button onclick="filterSet('f4',this)">Tingkatan 4</button><button onclick="filterSet('f5',this)">Tingkatan 5</button></div>
-<p class="note">Aliran latihan: Tulis jawapan → Hantar untuk semakan → Lihat markah dan isi yang dikesan → Buka jawapan point form → Baca sebab setiap isi diterima.</p>
+<p class="note">Aliran latihan: Tulis jawapan → Hantar untuk semakan → Sistem kesan keyword atau konsep seerti → Lihat markah dan isi yang dikesan → Buka jawapan point form → Baca sebab setiap isi diterima.</p>
 <div id="questionBank"></div>
 </div>
 <script src="questions-core.js"></script><script src="questions-extra.js"></script>
 <script>
 const questions=[...(window.coreQuestions||[]),...(window.extraQuestions||[])];
+const synonymMap={
+ 'kemerdekaan':['merdeka','bebas daripada penjajah','bebas penjajahan'],
+ 'kedaulatan':['berdaulat','kuasa tertinggi','hak mentadbir sendiri'],
+ 'perpaduan':['bersatu','keharmonian kaum','hubungan baik antara kaum'],
+ 'keamanan':['aman','keselamatan','tiada konflik'],
+ 'ekonomi':['kegiatan ekonomi','pendapatan','perdagangan','kemakmuran'],
+ 'pendidikan':['pelajaran','sekolah','ilmu','sistem persekolahan'],
+ 'kewarganegaraan':['warganegara','kerakyatan'],
+ 'raja berperlembagaan':['raja ikut perlembagaan','raja tertakluk kepada perlembagaan'],
+ 'demokrasi berparlimen':['rakyat pilih wakil','pilihan raya dan parlimen'],
+ 'pilihan raya':['undi','mengundi','pemilihan wakil'],
+ 'parlimen':['dewan rakyat','dewan negara','badan perundangan'],
+ 'komunis':['pkm','parti komunis malaya'],
+ 'bantahan':['menentang','protes','demonstrasi','membantah'],
+ 'kerjasama':['bekerjasama','muafakat','gabungan'],
+ 'pembangunan':['kemajuan','memajukan','menaik taraf'],
+ 'infrastruktur':['kemudahan asas','jalan raya','jambatan','kemudahan awam'],
+ 'media cetak':['akhbar','majalah','surat khabar'],
+ 'golongan intelektual':['cerdik pandai','golongan berpendidikan'],
+ 'hubungan luar':['dasar luar','diplomatik','hubungan diplomatik'],
+ 'misi pengaman':['pasukan pengaman','pengaman pbb'],
+ 'kemiskinan':['miskin','taraf hidup rendah'],
+ 'menyusun semula masyarakat':['susun semula masyarakat','hapus pengenalan kaum ikut pekerjaan'],
+ 'jus soli':['kerakyatan berdasarkan tempat lahir','kewarganegaraan berdasarkan tempat lahir'],
+ 'macmichael':['sir harold macmichael'],
+ 'yang di-pertuan agong':['ydpa','agong'],
+ 'persekutuan tanah melayu':['ptm'],
+ 'majlis perundangan persekutuan':['mpp'],
+ 'parti nasional indonesia':['pni'],
+ 'parti komunis malaya':['pkm'],
+ 'force 136':['pasukan 136'],
+ 'mpaja':['tentera anti-jepun rakyat tanah melayu']
+};
+function normalize(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s-]/g,' ').replace(/\s+/g,' ').trim()}
+function expandTerms(term){const t=normalize(term),out=[t];Object.entries(synonymMap).forEach(([base,list])=>{const all=[normalize(base),...list.map(normalize)];if(all.includes(t))out.push(...all)});return [...new Set(out)]}
+function termMatched(text,term){const variants=expandTerms(term);return variants.some(v=>{if(!v)return false;if(text.includes(v))return true;const words=v.split(' ').filter(w=>w.length>2);return words.length>=2&&words.every(w=>text.includes(w))})}
+function conceptMatched(text,group){return group.some(term=>termMatched(text,term))}
 function escapeHtml(s){return s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-function render(){document.getElementById('totalStat').textContent=questions.length+' soalan';document.getElementById('questionBank').innerHTML=questions.map((x,i)=>`<div class="card ${x.f}" data-i="${i}"><div class="meta">${x.meta}</div><div class="q">${i+1}. ${x.q}<span class="marks">${x.m} markah</span></div><textarea class="student-answer" placeholder="Tulis jawapan anda dalam ayat atau point form..."></textarea><div class="locked">Jawapan standard dikunci sehingga anda menghantar jawapan.</div><div class="actions"><button class="submit" onclick="grade(${i},this)">Hantar untuk semakan</button><button class="explain" onclick="showExplanation(${i},this)">Lihat jawapan dan penerangan</button></div><div class="result"></div><div class="answer"></div><div class="reason"></div></div>`).join('')}
-function grade(i,btn){const card=btn.closest('.card'),text=card.querySelector('textarea').value.toLowerCase().trim(),res=card.querySelector('.result'),exp=card.querySelector('.explain');if(text.length<8){res.style.display='block';res.innerHTML='<span class="weak"><b>Jawapan terlalu pendek.</b> Tulis sekurang-kurangnya satu isi yang lengkap sebelum dihantar.</span>';return}const x=questions[i],matched=[],missing=[];x.k.forEach((g,idx)=>{if(g.some(k=>text.includes(k)))matched.push(idx);else missing.push(idx)});const raw=Math.min(x.m,matched.length),pct=Math.round(raw/x.m*100);res.style.display='block';res.innerHTML=`<div class="score">Anggaran markah: ${raw}/${x.m}</div><p class="${pct>=60?'good':'weak'}">${pct>=80?'Jawapan kuat. Kebanyakan isi utama telah dikesan.':pct>=60?'Jawapan sederhana. Ada isi tepat tetapi masih boleh ditambah.':'Jawapan belum cukup. Banyak isi penting belum disebut.'}</p><p><b>Isi yang dikesan:</b><br>${matched.length?matched.map(n=>'• '+escapeHtml(x.p[n])).join('<br>'):'Belum ada kata kunci utama yang dapat dikesan.'}</p><p><b>Isi yang masih kurang:</b><br>${missing.length?missing.slice(0,Math.max(1,x.m-raw)).map(n=>'• '+escapeHtml(x.p[n])).join('<br>'):'Tiada isi utama yang ketara tertinggal.'}</p><p class="note">Markah ini ialah semakan kata kunci automatik. Guru masih perlu menilai ketepatan fakta, huraian, bahasa dan konteks jawapan.</p>`;exp.style.display='inline-block';btn.textContent='Semak semula';card.querySelector('.locked').textContent='Semakan selesai. Anda kini boleh membuka jawapan point form dan penerangan.'}
+function render(){document.getElementById('totalStat').textContent=questions.length+' soalan';document.getElementById('questionBank').innerHTML=questions.map((x,i)=>`<div class="card ${x.f}" data-i="${i}"><div class="meta">${x.meta}</div><div class="q">${i+1}. ${x.q}<span class="marks">${x.m} markah</span></div><textarea class="student-answer" placeholder="Tulis jawapan anda dalam ayat sendiri atau point form. Keyword, singkatan dan istilah seerti diterima jika konsep tepat."></textarea><div class="locked">Jawapan standard dikunci sehingga anda menghantar jawapan.</div><div class="actions"><button class="submit" onclick="grade(${i},this)">Hantar untuk semakan</button><button class="explain" onclick="showExplanation(${i},this)">Lihat jawapan dan penerangan</button></div><div class="result"></div><div class="answer"></div><div class="reason"></div></div>`).join('')}
+function grade(i,btn){const card=btn.closest('.card'),text=normalize(card.querySelector('textarea').value),res=card.querySelector('.result'),exp=card.querySelector('.explain');if(text.length<3){res.style.display='block';res.innerHTML='<span class="weak"><b>Belum ada jawapan yang boleh disemak.</b> Tulis sekurang-kurangnya satu keyword atau isi.</span>';return}const x=questions[i],matched=[],missing=[];x.k.forEach((g,idx)=>{if(conceptMatched(text,g))matched.push(idx);else missing.push(idx)});const raw=Math.min(x.m,matched.length),pct=Math.round(raw/x.m*100);res.style.display='block';res.innerHTML=`<div class="score">Anggaran markah: ${raw}/${x.m}</div><p class="${pct>=60?'good':'weak'}">${pct>=80?'Jawapan kuat. Kebanyakan konsep utama telah dikesan.':pct>=60?'Jawapan sederhana. Beberapa keyword atau konsep tepat telah dikesan.':'Jawapan belum cukup. Tambahkan lagi keyword atau isi penting.'}</p><p><b>Isi/konsep yang dikesan:</b><br>${matched.length?matched.map(n=>'• '+escapeHtml(x.p[n])).join('<br>'):'Belum ada keyword atau konsep utama yang dapat dikesan.'}</p><p><b>Isi yang masih kurang:</b><br>${missing.length?missing.slice(0,Math.max(1,x.m-raw)).map(n=>'• '+escapeHtml(x.p[n])).join('<br>'):'Tiada isi utama yang ketara tertinggal.'}</p><p class="note">Pelajar tidak perlu menyalin ayat standard. Sistem menerima keyword, singkatan, frasa seerti dan jawapan dengan susunan ayat berbeza selagi konsep sejarah tepat. Markah akhir masih perlu mengambil kira ketepatan fakta dan kehendak soalan.</p>`;exp.style.display='inline-block';btn.textContent='Semak semula';card.querySelector('.locked').textContent='Semakan selesai. Anda kini boleh membuka jawapan point form dan penerangan.'}
 function showExplanation(i,btn){const card=btn.closest('.card'),ans=card.querySelector('.answer'),rea=card.querySelector('.reason'),x=questions[i],open=ans.style.display==='block';ans.style.display=open?'none':'block';rea.style.display=open?'none':'block';if(!open){ans.innerHTML='<b>Jawapan standard — point form</b><ul>'+x.p.slice(0,x.m).map(p=>'<li>'+escapeHtml(p)+'</li>').join('')+'</ul>';rea.innerHTML='<b>Mengapa isi ini diterima?</b><ul>'+x.r.map(p=>'<li>'+escapeHtml(p)+'</li>').join('')+'</ul>';btn.textContent='Tutup jawapan dan penerangan'}else btn.textContent='Lihat jawapan dan penerangan'}
 function filterSet(type,btn){document.querySelectorAll('.filters button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.card').forEach(c=>c.classList.toggle('hidden',type!=='all'&&!c.classList.contains(type)))}
 render();
