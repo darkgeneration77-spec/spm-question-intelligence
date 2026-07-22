@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>拼音王国 PK 大赛</title>
+  <style>
+    :root{--ink:#273043;--blue:#5c7cfa;--orange:#ff922b;--green:#2f9e44;--red:#e03131;--card:#fff}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:"Arial Rounded MT Bold","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);background:linear-gradient(180deg,#dff7ff,#fff4cc)}
+    button,input{font:inherit}.app{max-width:900px;margin:auto;padding:16px}.hero,.panel{background:rgba(255,255,255,.94);border-radius:26px;padding:18px;box-shadow:0 12px 30px rgba(39,48,67,.12)}
+    .hero{text-align:center}.hero h1{margin:0;font-size:clamp(30px,8vw,56px)}.hero p{margin:8px 0 0;font-size:18px}.panel{margin-top:14px}.hidden{display:none!important}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:6px;margin-bottom:12px}.field input{width:100%;padding:14px;border:3px solid #e9ecef;border-radius:16px;font-size:20px}.btn{border:0;border-radius:18px;padding:14px 18px;cursor:pointer;font-weight:700}.primary{background:var(--blue);color:white}.secondary{background:#edf2ff;color:#364fc7}.orange{background:var(--orange);color:white}.back{background:#f1f3f5;color:var(--ink)}
+    .room-code{font-size:42px;letter-spacing:8px;text-align:center;margin:12px 0}.players{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.player{background:#f8f9fa;border-radius:18px;padding:12px;display:flex;justify-content:space-between;align-items:center}.ready{color:var(--green)}
+    .top{display:flex;justify-content:space-between;gap:8px;align-items:center}.timer{font-size:34px}.question{font-size:clamp(28px,7vw,48px);text-align:center;padding:24px 8px}.answers{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.answer{min-height:76px;border:3px solid #e9ecef;background:white;border-radius:20px;font-size:26px;cursor:pointer}.answer:disabled{cursor:not-allowed;opacity:.75}.answer.correct{background:#d3f9d8;border-color:var(--green)}.answer.wrong{background:#ffe3e3;border-color:var(--red)}
+    .scoreboard{display:grid;gap:8px}.rank{display:grid;grid-template-columns:46px 1fr 70px;align-items:center;background:#f8f9fa;border-radius:16px;padding:10px}.rank strong:last-child{text-align:right}.message{text-align:center;min-height:30px;margin:12px 0}.note{font-size:14px;color:#667085;text-align:center;margin-top:12px}
+    @media(max-width:620px){.grid,.players,.answers{grid-template-columns:1fr}.room-code{font-size:34px}.top{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+<main class="app">
+  <section class="hero"><h1>⚔️ 拼音王国 PK</h1><p>同一间课室，多位学生同时抢答！</p></section>
+
+  <section id="connectPanel" class="panel">
+    <div class="field"><label for="name">勇士名字</label><input id="name" maxlength="12" placeholder="例如：小美"></div>
+    <div class="grid">
+      <button id="createBtn" class="btn orange" type="button">创建比赛房间</button>
+      <div>
+        <div class="field"><label for="roomInput">输入房间号码</label><input id="roomInput" maxlength="6" inputmode="numeric" placeholder="6位号码"></div>
+        <button id="joinBtn" class="btn primary" type="button" style="width:100%">加入比赛</button>
+      </div>
+    </div>
+    <p id="connectMessage" class="message"></p>
+  </section>
+
+  <section id="lobbyPanel" class="panel hidden">
+    <div class="top"><button id="leaveBtn" class="btn back" type="button">← 离开</button><strong>等待勇士加入</strong><span id="count">0 人</span></div>
+    <div class="room-code" id="roomCode">------</div>
+    <p class="note">老师把这个号码告诉学生。所有人输入同一个号码即可进入。</p>
+    <div id="players" class="players"></div>
+    <div class="grid" style="margin-top:14px">
+      <button id="readyBtn" class="btn secondary" type="button">我准备好了</button>
+      <button id="startBtn" class="btn orange hidden" type="button">老师开始比赛</button>
+    </div>
+    <p id="lobbyMessage" class="message">等待大家准备……</p>
+  </section>
+
+  <section id="gamePanel" class="panel hidden">
+    <div class="top"><strong id="round">第 1 / 10 题</strong><strong class="timer" id="timer">10</strong><strong id="myScore">⭐ 0</strong></div>
+    <div id="question" class="question">准备出题</div>
+    <div id="answers" class="answers"></div>
+    <p id="gameMessage" class="message">看准再抢答！</p>
+    <div id="liveRanks" class="scoreboard"></div>
+  </section>
+
+  <section id="resultPanel" class="panel hidden">
+    <h2 style="text-align:center">🏆 比赛成绩</h2><div id="finalRanks" class="scoreboard"></div>
+    <button id="againBtn" class="btn primary" type="button" style="width:100%;margin-top:14px">回到房间再来一局</button>
+  </section>
+</main>
+<script>
+  // 部署 Cloudflare Worker 后，把下面网址改成你的 workers.dev 网址。
+  const PK_SERVER = 'https://REPLACE-WITH-YOUR-WORKER.workers.dev';
+  const questions = [
+    {q:'“妈 mā” 是第几声？',a:'第一声',c:['第一声','第二声','第三声','第四声']},
+    {q:'“马 mǎ” 是第几声？',a:'第三声',c:['第一声','第二声','第三声','第四声']},
+    {q:'“骂 mà” 是第几声？',a:'第四声',c:['第一声','第二声','第三声','第四声']},
+    {q:'“跑” 的正确拼音是？',a:'pǎo',c:['pāo','páo','pǎo','pào']},
+    {q:'“多” 的正确拼音是？',a:'duō',c:['dūo','duō','duó','duǒ']},
+    {q:'“灰” 的正确拼音是？',a:'huī',c:['hūi','huí','huī','huǐ']},
+    {q:'“秀” 的正确拼音是？',a:'xiù',c:['xìu','xiú','xiù','xǐu']},
+    {q:'“女” 的正确拼音是？',a:'nǚ',c:['nǔ','nǚ','nù','nū']},
+    {q:'“雨” 的正确拼音是？',a:'yǔ',c:['yǚ','yǔ','yù','yú']},
+    {q:'i 和 u 一起时，声调标在哪里？',a:'标在后面的韵母',c:['标在前面','标在后面的韵母','两个都标','不用标']}
+  ];
+  const $=id=>document.getElementById(id);let ws=null,me='',room='',host=false,myId='',answered=false;
+  function show(id){['connectPanel','lobbyPanel','gamePanel','resultPanel'].forEach(x=>$(x).classList.toggle('hidden',x!==id))}
+  function send(type,data={}){if(ws&&ws.readyState===1)ws.send(JSON.stringify({type,...data}))}
+  function connect(code,isHost){
+    me=$('name').value.trim();if(!me){$('connectMessage').textContent='先写上勇士名字。';return}
+    if(PK_SERVER.includes('REPLACE-')){$('connectMessage').textContent='线上PK后台还未部署。请先完成 Cloudflare Worker 部署。';return}
+    room=code;host=isHost;const u=new URL(PK_SERVER.replace(/^http/,'ws')+'/room/'+room);u.searchParams.set('name',me);u.searchParams.set('host',host?'1':'0');ws=new WebSocket(u);
+    ws.onopen=()=>show('lobbyPanel');ws.onmessage=e=>handle(JSON.parse(e.data));ws.onerror=()=>{$('connectMessage').textContent='连接失败，请检查网络或后台网址。'};ws.onclose=()=>{if(!$('resultPanel').classList.contains('hidden'))return;$('lobbyMessage').textContent='连接已断开。'};
+  }
+  function handle(m){
+    if(m.type==='welcome'){myId=m.id;room=m.room;$('roomCode').textContent=room;$('startBtn').classList.toggle('hidden',!m.isHost)}
+    if(m.type==='state'){renderPlayers(m.players);renderRanks(m.players,'liveRanks');$('count').textContent=m.players.length+' 人'}
+    if(m.type==='question'){show('gamePanel');answered=false;renderQuestion(m.index,m.question,m.endsAt)}
+    if(m.type==='answerResult'){$('gameMessage').textContent=m.correct?'答对了！速度加分！':'差一点，正确答案是：'+m.answer;markAnswer(m.choice,m.answer)}
+    if(m.type==='finished'){renderRanks(m.players,'finalRanks');show('resultPanel')}
+    if(m.type==='error'){$('connectMessage').textContent=m.message;$('lobbyMessage').textContent=m.message}
+  }
+  function renderPlayers(list){$('players').innerHTML=list.map(p=>`<div class="player"><span>${p.host?'👑 ':''}${esc(p.name)}</span><strong class="${p.ready?'ready':''}">${p.ready?'已准备':'等待中'}</strong></div>`).join('')}
+  function renderRanks(list,target){const sorted=[...list].sort((a,b)=>b.score-a.score||a.name.localeCompare(b.name));$(target).innerHTML=sorted.map((p,i)=>`<div class="rank"><strong>${['🥇','🥈','🥉'][i]||i+1}</strong><span>${esc(p.name)}</span><strong>${p.score}</strong></div>`).join('')}
+  function renderQuestion(i,q,endsAt){$('round').textContent=`第 ${i+1} / ${questions.length} 题`;$('question').textContent=q.q;$('answers').innerHTML='';q.c.forEach(choice=>{const b=document.createElement('button');b.type='button';b.className='answer';b.textContent=choice;b.addEventListener('click',()=>{if(answered)return;answered=true;document.querySelectorAll('.answer').forEach(x=>x.disabled=true);send('answer',{choice});$('gameMessage').textContent='答案已送出！'});$('answers').appendChild(b)});tick(endsAt)}
+  function tick(endsAt){const f=()=>{const n=Math.max(0,Math.ceil((endsAt-Date.now())/1000));$('timer').textContent=n;if(n>0&&!$('gamePanel').classList.contains('hidden'))requestAnimationFrame(f)};f()}
+  function markAnswer(choice,answer){document.querySelectorAll('.answer').forEach(b=>{if(b.textContent===answer)b.classList.add('correct');else if(b.textContent===choice)b.classList.add('wrong')})}
+  function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+  $('createBtn').addEventListener('click',()=>connect(String(Math.floor(100000+Math.random()*900000)),true));
+  $('joinBtn').addEventListener('click',()=>{const c=$('roomInput').value.trim();if(!/^\d{6}$/.test(c)){$('connectMessage').textContent='请输入6位房间号码。';return}connect(c,false)});
+  $('readyBtn').addEventListener('click',()=>send('ready'));
+  $('startBtn').addEventListener('click',()=>send('start',{questions}));
+  $('leaveBtn').addEventListener('click',()=>{if(ws)ws.close();show('connectPanel')});
+  $('againBtn').addEventListener('click',()=>{show('lobbyPanel');send('reset')});
+</script>
+</body>
+</html>
