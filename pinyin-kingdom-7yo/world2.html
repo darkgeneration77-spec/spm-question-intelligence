@@ -3,28 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>拼音王国 World 2：声母峡谷</title>
+  <title>拼音王国 World 2：标调神殿</title>
   <style>
-    :root{--ink:#24324a;--blue:#4c6ef5;--purple:#845ef7;--green:#2f9e44;--red:#e03131;--gold:#f59f00;--card:#fff}
+    :root{--ink:#25324a;--blue:#4c6ef5;--purple:#845ef7;--green:#2f9e44;--red:#e03131;--gold:#f59f00;--soft:#f8f9fa}
     *{box-sizing:border-box}
-    body{margin:0;min-height:100vh;font-family:"Arial Rounded MT Bold","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);background:linear-gradient(180deg,#dff7ff,#fff4cc)}
-    button{font:inherit}.app{max-width:980px;margin:auto;padding:16px}.hero,.panel{background:rgba(255,255,255,.95);border-radius:28px;padding:18px;box-shadow:0 12px 30px rgba(36,50,74,.12)}
+    body{margin:0;min-height:100vh;font-family:"Arial Rounded MT Bold","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);background:linear-gradient(180deg,#e5dbff,#fff3bf)}
+    button{font:inherit}.app{max-width:980px;margin:auto;padding:16px}.hero,.panel{background:rgba(255,255,255,.96);border-radius:28px;padding:18px;box-shadow:0 12px 30px rgba(37,50,74,.12)}
     .hero{text-align:center}.hero h1{margin:0;font-size:clamp(30px,7vw,54px)}.hero p{margin:8px 0 0;font-size:18px}.panel{margin-top:14px}.hidden{display:none!important}
-    .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.pill{background:#edf2ff;color:#364fc7;padding:8px 12px;border-radius:999px}.progress{height:16px;background:#e9ecef;border-radius:999px;overflow:hidden;margin:14px 0}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));width:0;transition:.3s}
+    .lesson{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}.rule{background:var(--soft);border-radius:18px;padding:14px;text-align:center}.rule strong{display:block;font-size:22px;margin-bottom:5px}
+    .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.pill{background:#edf2ff;color:#364fc7;padding:8px 12px;border-radius:999px}.progress{height:16px;background:#e9ecef;border-radius:999px;overflow:hidden;margin:14px 0}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--purple),var(--gold));width:0;transition:.3s}
     .battle{display:grid;grid-template-columns:1fr 1.3fr;gap:14px}.fighter,.boss{border-radius:24px;padding:14px;text-align:center}.fighter{background:#f8f9fa}.boss{background:#fff0f6}.face{font-size:68px}.hp{height:14px;background:#dee2e6;border-radius:999px;overflow:hidden;margin-top:8px}.hp span{display:block;height:100%;transition:.3s}.fighter .hp span{background:var(--green)}.boss .hp span{background:var(--red)}
-    .question{text-align:center;font-size:clamp(28px,6vw,46px);padding:18px 8px}.hint{text-align:center;color:#667085;margin-bottom:12px}.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.answer{min-height:84px;border:3px solid #e9ecef;background:#fff;border-radius:22px;font-size:30px;cursor:pointer;transition:.15s}.answer:hover{transform:scale(1.02);border-color:var(--purple)}.answer.correct{background:#d3f9d8;border-color:var(--green)}.answer.wrong{background:#ffe3e3;border-color:var(--red)}
-    .combo{text-align:center;font-size:24px;color:var(--gold);min-height:34px}.message{text-align:center;min-height:44px;background:#f8f9fa;border-radius:18px;padding:12px;margin-top:12px}.skills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}.skill{border:2px solid #e9ecef;background:white;border-radius:16px;padding:9px 13px;cursor:pointer}.skill:disabled{opacity:.45;cursor:not-allowed}.primary{border:0;background:var(--blue);color:white;border-radius:18px;padding:14px 18px;cursor:pointer}.secondary{border:0;background:#f1f3f5;color:var(--ink);border-radius:18px;padding:14px 18px;cursor:pointer}.reward{text-align:center}.reward .big{font-size:86px}.stars{font-size:28px;letter-spacing:4px}.shake{animation:shake .35s}.hit{animation:hit .35s}@keyframes shake{25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-5px)}}@keyframes hit{50%{transform:scale(1.12)}}
-    @media(max-width:680px){.battle,.answers{grid-template-columns:1fr}.face{font-size:58px}}
+    .question{text-align:center;font-size:clamp(28px,7vw,48px);padding:18px 8px}.hint{text-align:center;color:#667085;margin-bottom:12px}.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.answer{min-height:84px;border:3px solid #e9ecef;background:#fff;border-radius:22px;font-size:30px;cursor:pointer;transition:.15s}.answer:hover{transform:scale(1.02);border-color:var(--purple)}.answer.correct{background:#d3f9d8;border-color:var(--green)}.answer.wrong{background:#ffe3e3;border-color:var(--red)}
+    .combo{text-align:center;font-size:24px;color:var(--gold);min-height:34px}.message{text-align:center;min-height:44px;background:#f8f9fa;border-radius:18px;padding:12px;margin-top:12px}.skills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}.skill{border:2px solid #e9ecef;background:white;border-radius:16px;padding:9px 13px;cursor:pointer}.skill:disabled{opacity:.45;cursor:not-allowed}.primary{border:0;background:var(--purple);color:white;border-radius:18px;padding:14px 18px;cursor:pointer}.secondary{border:0;background:#f1f3f5;color:var(--ink);border-radius:18px;padding:14px 18px;cursor:pointer}.reward{text-align:center}.reward .big{font-size:86px}.stars{font-size:28px;letter-spacing:4px}.shake{animation:shake .35s}@keyframes shake{25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-5px)}}
+    @media(max-width:680px){.battle,.answers,.lesson{grid-template-columns:1fr}.face{font-size:58px}}
   </style>
 </head>
 <body>
 <main class="app">
   <section class="hero">
-    <h1>⛰️ 声母峡谷</h1>
-    <p>听清楚、认得快，打败声母鹰王！</p>
+    <h1>🏛️ 标调神殿</h1>
+    <p>找到声调该站的位置，打败标调守护兽！</p>
   </section>
 
-  <section id="gamePanel" class="panel">
+  <section id="lessonPanel" class="panel">
+    <h2 style="text-align:center">先记住四个神殿口诀</h2>
+    <div class="lesson">
+      <div class="rule"><strong>有 a 不放过</strong><span>pǎo</span></div>
+      <div class="rule"><strong>没有 a 找 o、e</strong><span>duō、bèi</span></div>
+      <div class="rule"><strong>i、u 并列标后面</strong><span>huī、xiù</span></div>
+      <div class="rule"><strong>单个韵母直接标</strong><span>è</span></div>
+    </div>
+    <div class="lesson" style="grid-template-columns:repeat(2,1fr)">
+      <div class="rule"><strong>j、q、x、y 遇 ü</strong><span>去掉两点：jū、qù、xǔ、yǔ</span></div>
+      <div class="rule"><strong>n、l 遇 ü</strong><span>保留两点：nǚ、lǚ</span></div>
+    </div>
+    <button id="startBtn" class="primary" type="button" style="width:100%;margin-top:14px">进入神殿挑战</button>
+  </section>
+
+  <section id="gamePanel" class="panel hidden">
     <div class="top">
       <button id="backBtn" class="secondary" type="button">← 返回拼音王国</button>
       <span class="pill" id="round">第 1 / 20 题</span>
@@ -32,25 +48,15 @@
     </div>
     <div class="progress"><span id="progress"></span></div>
     <div class="battle">
-      <div id="fighter" class="fighter">
-        <div class="face">🐰</div>
-        <strong>小兔勇士</strong>
-        <div class="hp"><span id="playerHp" style="width:100%"></span></div>
-        <div id="playerHpText">100 HP</div>
-      </div>
-      <div id="boss" class="boss">
-        <div class="face">🦅</div>
-        <strong>声母鹰王</strong>
-        <div class="hp"><span id="bossHp" style="width:100%"></span></div>
-        <div id="bossHpText">2000 HP</div>
-      </div>
+      <div id="fighter" class="fighter"><div class="face">🐰</div><strong>小兔勇士</strong><div class="hp"><span id="playerHp" style="width:100%"></span></div><div id="playerHpText">100 HP</div></div>
+      <div id="boss" class="boss"><div class="face">🗿</div><strong>标调守护兽</strong><div class="hp"><span id="bossHp" style="width:100%"></span></div><div id="bossHpText">2000 HP</div></div>
     </div>
     <div id="combo" class="combo"></div>
     <div id="question" class="question">准备开始</div>
     <div id="hint" class="hint">选出正确答案。</div>
     <div id="answers" class="answers"></div>
     <div class="skills">
-      <button id="hintSkill" class="skill" type="button">💡 提示 × 3</button>
+      <button id="hintSkill" class="skill" type="button">💡 排除 × 3</button>
       <button id="shieldSkill" class="skill" type="button">🛡️ 护盾 × 1</button>
     </div>
     <div id="message" class="message">开始挑战吧！</div>
@@ -58,7 +64,7 @@
 
   <section id="rewardPanel" class="panel reward hidden">
     <div class="big">🏆</div>
-    <h2>声母鹰王被打败了！</h2>
+    <h2>标调守护兽被打败了！</h2>
     <div id="stars" class="stars">⭐⭐⭐</div>
     <p id="summary"></p>
     <button id="againBtn" class="primary" type="button">再玩一次</button>
@@ -67,40 +73,39 @@
 </main>
 <script>
   const questions=[
-    {q:'哪一个是声母？',a:'b',c:['b','ai','ang','ü'],tip:'声母在音节最前面。'},
-    {q:'“波”开头的声母是？',a:'b',c:['b','p','m','f'],tip:'“波”读 bō，声母是 b。'},
-    {q:'“婆”开头的声母是？',a:'p',c:['b','p','m','f'],tip:'“婆”读 pó，声母是 p。'},
-    {q:'“摸”开头的声母是？',a:'m',c:['b','p','m','f'],tip:'“摸”读 mō，声母是 m。'},
-    {q:'“佛”开头的声母是？',a:'f',c:['b','p','m','f'],tip:'“佛”读 fó，声母是 f。'},
-    {q:'“得”开头的声母是？',a:'d',c:['d','t','n','l'],tip:'“得”读 dé，声母是 d。'},
-    {q:'“特”开头的声母是？',a:'t',c:['d','t','n','l'],tip:'“特”读 tè，声母是 t。'},
-    {q:'“呢”开头的声母是？',a:'n',c:['d','t','n','l'],tip:'“呢”读 ne，声母是 n。'},
-    {q:'“乐”开头的声母是？',a:'l',c:['d','t','n','l'],tip:'“乐”读 lè，声母是 l。'},
-    {q:'“哥”开头的声母是？',a:'g',c:['g','k','h','j'],tip:'“哥”读 gē，声母是 g。'},
-    {q:'“科”开头的声母是？',a:'k',c:['g','k','h','j'],tip:'“科”读 kē，声母是 k。'},
-    {q:'“喝”开头的声母是？',a:'h',c:['g','k','h','j'],tip:'“喝”读 hē，声母是 h。'},
-    {q:'“机”开头的声母是？',a:'j',c:['j','q','x','z'],tip:'“机”读 jī，声母是 j。'},
-    {q:'“欺”开头的声母是？',a:'q',c:['j','q','x','z'],tip:'“欺”读 qī，声母是 q。'},
-    {q:'“希”开头的声母是？',a:'x',c:['j','q','x','z'],tip:'“希”读 xī，声母是 x。'},
-    {q:'哪一个是翘舌音声母？',a:'zh',c:['z','c','s','zh'],tip:'zh、ch、sh、r 是翘舌音。'},
-    {q:'哪一个是平舌音声母？',a:'z',c:['zh','ch','sh','z'],tip:'z、c、s 是平舌音。'},
-    {q:'“吃”开头的声母是？',a:'ch',c:['zh','ch','sh','r'],tip:'“吃”读 chī，声母是 ch。'},
-    {q:'“师”开头的声母是？',a:'sh',c:['zh','ch','sh','r'],tip:'“师”读 shī，声母是 sh。'},
-    {q:'“乌”作声母时写成？',a:'w',c:['y','w','u','o'],tip:'y 和 w 也列在声母表里。'}
+    {q:'“跑” 的正确拼音是？',a:'pǎo',c:['pāo','páo','pǎo','pào'],tip:'有 a 不放过，声调标在 a 上。'},
+    {q:'“好” 的正确拼音是？',a:'hǎo',c:['hāo','háo','hǎo','hào'],tip:'有 a 不放过。'},
+    {q:'“猫” 的正确拼音是？',a:'māo',c:['māo','máo','mǎo','mào'],tip:'声调标在 a 上。'},
+    {q:'“多” 的正确拼音是？',a:'duō',c:['dūo','duō','duó','duǒ'],tip:'没有 a，就找 o。'},
+    {q:'“饿” 的拼音是？',a:'è',c:['ē','é','ě','è'],tip:'单个韵母直接标。'},
+    {q:'“倍” 的正确拼音是？',a:'bèi',c:['bēi','béi','běi','bèi'],tip:'没有 a，就找 e。'},
+    {q:'“灰” 的正确拼音是？',a:'huī',c:['hūi','huí','huī','huǐ'],tip:'i、u 并列，声调标后面。'},
+    {q:'“秀” 的正确拼音是？',a:'xiù',c:['xìu','xiú','xiù','xǐu'],tip:'i、u 并列，声调标后面。'},
+    {q:'“六” 的正确拼音是？',a:'liù',c:['lìu','liú','liù','lǐu'],tip:'i、u 并列，声调标后面的 u。'},
+    {q:'“水” 的正确拼音是？',a:'shuǐ',c:['shǔi','shuǐ','shuì','shuí'],tip:'i、u 并列，声调标后面的 i。'},
+    {q:'“居” 的正确拼音是？',a:'jū',c:['jǖ','jū','jǔ','jù'],tip:'j 遇 ü，去掉两点。'},
+    {q:'“去” 的正确拼音是？',a:'qù',c:['qǜ','qù','qǔ','qú'],tip:'q 遇 ü，去掉两点。'},
+    {q:'“许” 的正确拼音是？',a:'xǔ',c:['xǚ','xǔ','xù','xú'],tip:'x 遇 ü，去掉两点。'},
+    {q:'“雨” 的正确拼音是？',a:'yǔ',c:['yǚ','yǔ','yù','yú'],tip:'y 遇 ü，去掉两点。'},
+    {q:'“女” 的正确拼音是？',a:'nǚ',c:['nǔ','nǚ','nù','nū'],tip:'n 遇 ü，保留两点。'},
+    {q:'“旅” 的正确拼音是？',a:'lǚ',c:['lǔ','lǚ','lù','lū'],tip:'l 遇 ü，保留两点。'},
+    {q:'有 a 时，声调应该标在哪里？',a:'标在 a 上',c:['标在 a 上','标在最后一个字母','标在声母上','两个都标'],tip:'口诀：有 a 不放过。'},
+    {q:'没有 a 时，先找哪两个韵母？',a:'o、e',c:['i、u','o、e','n、g','b、p'],tip:'口诀：没有 a 找 o、e。'},
+    {q:'i 和 u 并列时，声调标在哪里？',a:'标在后面的韵母',c:['标在前面','标在后面的韵母','两个都标','不标'],tip:'口诀：i、u 并列标在后。'},
+    {q:'n、l 遇到 ü 时，两点怎么办？',a:'保留两点',c:['去掉两点','保留两点','只留一点','换成 u'],tip:'n、l 遇 ü，保留两点。'}
   ];
   const $=id=>document.getElementById(id);
   let order=[],index=0,score=0,combo=0,player=100,boss=2000,locked=false,hints=3,shield=1,shieldOn=false,correct=0;
   function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
-  function start(){order=shuffle(questions);index=0;score=0;combo=0;player=100;boss=2000;locked=false;hints=3;shield=1;shieldOn=false;correct=0;$('rewardPanel').classList.add('hidden');$('gamePanel').classList.remove('hidden');update();render()}
+  function start(){order=shuffle(questions);index=0;score=0;combo=0;player=100;boss=2000;locked=false;hints=3;shield=1;shieldOn=false;correct=0;$('lessonPanel').classList.add('hidden');$('rewardPanel').classList.add('hidden');$('gamePanel').classList.remove('hidden');update();render()}
   function render(){locked=false;const item=order[index];$('round').textContent=`第 ${index+1} / ${order.length} 题`;$('progress').style.width=`${index/order.length*100}%`;$('question').textContent=item.q;$('hint').textContent='选出正确答案。';$('answers').innerHTML='';shuffle(item.c).forEach(choice=>{const b=document.createElement('button');b.type='button';b.className='answer';b.textContent=choice;b.addEventListener('click',()=>answer(b,choice,item));$('answers').appendChild(b)});$('message').textContent='看清楚，再点击。';updateSkills()}
   function answer(btn,choice,item){if(locked)return;locked=true;const buttons=[...document.querySelectorAll('.answer')];if(choice===item.a){btn.classList.add('correct');combo++;correct++;let damage=100+Math.min(combo,5)*20;score+=damage;boss=Math.max(0,boss-damage);$('boss').classList.add('shake');setTimeout(()=>$('boss').classList.remove('shake'),350);$('message').textContent=`答对了！${item.tip}`;}else{btn.classList.add('wrong');combo=0;const right=buttons.find(x=>x.textContent===item.a);if(right)right.classList.add('correct');if(shieldOn){shieldOn=false;$('message').textContent=`护盾挡住攻击！正确答案是“${item.a}”。${item.tip}`;}else{player=Math.max(0,player-10);$('fighter').classList.add('shake');setTimeout(()=>$('fighter').classList.remove('shake'),350);$('message').textContent=`差一点。正确答案是“${item.a}”。${item.tip}`;}}buttons.forEach(x=>x.disabled=true);update();setTimeout(()=>{index++;if(index>=order.length||boss<=0)finish();else render()},1500)}
-  function update(){ $('score').textContent=score;$('playerHp').style.width=player+'%';$('playerHpText').textContent=player+' HP';$('bossHp').style.width=(boss/2000*100)+'%';$('bossHpText').textContent=boss+' HP';$('combo').textContent=combo>=10?'🔥 LEGEND ×'+combo:combo>=5?'⚡ ULTRA ×'+combo:combo>=2?'🔥 COMBO ×'+combo:'';updateSkills() }
-  function updateSkills(){ $('hintSkill').textContent='💡 提示 × '+hints;$('shieldSkill').textContent=shieldOn?'🛡️ 护盾已开启':'🛡️ 护盾 × '+shield;$('hintSkill').disabled=hints<=0||locked;$('shieldSkill').disabled=(shield<=0||shieldOn||locked) }
-  function finish(){ $('gamePanel').classList.add('hidden');$('rewardPanel').classList.remove('hidden');const rate=Math.round(correct/order.length*100);$('stars').textContent=rate>=90?'⭐⭐⭐':rate>=70?'⭐⭐':'⭐';$('summary').textContent=`答对 ${correct} / ${order.length} 题，正确率 ${rate}%，获得 ${score} 分。`;}
+  function update(){$('score').textContent=score;$('playerHp').style.width=player+'%';$('playerHpText').textContent=player+' HP';$('bossHp').style.width=(boss/2000*100)+'%';$('bossHpText').textContent=boss+' HP';$('combo').textContent=combo>=10?'🔥 LEGEND ×'+combo:combo>=5?'⚡ ULTRA ×'+combo:combo>=2?'🔥 COMBO ×'+combo:'';updateSkills()}
+  function updateSkills(){$('hintSkill').textContent='💡 排除 × '+hints;$('shieldSkill').textContent=shieldOn?'🛡️ 护盾已开启':'🛡️ 护盾 × '+shield;$('hintSkill').disabled=hints<=0||locked;$('shieldSkill').disabled=shield<=0||shieldOn||locked}
+  function finish(){$('gamePanel').classList.add('hidden');$('rewardPanel').classList.remove('hidden');const rate=Math.round(correct/order.length*100);$('stars').textContent=rate>=90?'⭐⭐⭐':rate>=70?'⭐⭐':'⭐';$('summary').textContent=`答对 ${correct} / ${order.length} 题，正确率 ${rate}%，获得 ${score} 分。`;localStorage.setItem('pinyinWorld2Done','1')}
   $('hintSkill').addEventListener('click',()=>{if(hints<=0||locked)return;hints--;const item=order[index];const wrong=[...document.querySelectorAll('.answer')].filter(b=>b.textContent!==item.a);shuffle(wrong).slice(0,2).forEach(b=>{b.disabled=true;b.style.opacity='.28'});$('hint').textContent='已经帮你排除两个错误答案。';updateSkills()});
   $('shieldSkill').addEventListener('click',()=>{if(shield<=0||shieldOn||locked)return;shield--;shieldOn=true;$('message').textContent='护盾开启！下一次答错不会扣血。';updateSkills()});
-  $('againBtn').addEventListener('click',start);$('homeBtn').addEventListener('click',()=>location.href='./');$('backBtn').addEventListener('click',()=>location.href='./');
-  start();
+  $('startBtn').addEventListener('click',start);$('againBtn').addEventListener('click',start);$('backBtn').addEventListener('click',()=>location.href='index.html');$('homeBtn').addEventListener('click',()=>location.href='index.html');
 </script>
 </body>
 </html>
